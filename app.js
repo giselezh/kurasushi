@@ -40,7 +40,7 @@ const translations = {
     "team.subtitle": "深入淺出的個案報告，結合先進 AI 人像技術（D-ID）進行影音策略闡述。",
     "team.btn.did": "播放 D-ID 簡報 V2",
     "summary.title": "執行摘要 (Executive Summary)",
-    "summary.kpi.title": "藏壽司台灣關鍵指標 (2025)",
+    "summary.kpi.title": "亞洲藏壽司 (2754)",
     "summary.kpi.stores": "營運分店數",
     "summary.kpi.revenue": "年營收估值",
     "summary.kpi.satisfaction": "客戶滿意度",
@@ -126,7 +126,7 @@ const translations = {
     "team.subtitle": "Insightful case reports utilizing advanced AI avatar technology (D-ID) for visual video summaries.",
     "team.btn.did": "Play D-ID Video V2",
     "summary.title": "Executive Summary",
-    "summary.kpi.title": "Kura Sushi Taiwan Key Performance Indicators (2025)",
+    "summary.kpi.title": "Kura Sushi Asia Co., Ltd. (2754)",
     "summary.kpi.stores": "Operating Branches",
     "summary.kpi.revenue": "Est. Annual Revenue",
     "summary.kpi.satisfaction": "Customer Satisfaction",
@@ -457,6 +457,16 @@ const teamData = {
     { id: "david", name: "David Chen", role: "MBA Researcher / Operations & Logistics", avatar: "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=250", desc: "Focused on Industrial Engineering (IE) and supply chain logistics. Analyzed Kura's automated disposal tracks and PESTEL.", videoUrl: "https://www.w3schools.com/html/movie.mp4", captions: [{ time: 0, text: "Greetings professors, I'm David Chen. I will deconstruct Kura's macro-environment and value chain." }, { time: 5, text: "Confronted by Taiwan's severe service labor shortage, Kura's smart logistics play a pivotal role." }, { time: 10, text: "Their patented plate water waterways and dishwasher integration slash floor labor by over 35 percent." }, { time: 15, text: "This integration of manufacturing logic into hospitality creates a highly robust competitive shield." }] },
     { id: "ray", name: "Ray Huang", role: "MBA Researcher / Digital Strategy", avatar: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=250", desc: "Specialized in service sector Digital Transformation (DX). Conducted the VRIO Matrix assessment and Ansoff Growth study.", videoUrl: "https://www.w3schools.com/html/mov_bbb.mp4", captions: [{ time: 0, text: "Hello everyone, I'm Ray Huang. I am going to analyze the VRIO matrix and Ansoff growth strategies." }, { time: 5, text: "Through VRIO, we proved that 'Mr. Fresh' and the Bikkura Pon system secure long-term advantages." }, { time: 10, text: "The Ansoff matrix illustrates that establishing freestanding 'Tuzang' street-side flagships is an excellent expansion tool." }, { time: 15, text: "These independent stores free the brand from retail mall commissions while building an immersive brand image." }] }
   ]
+};
+
+// ==========================================================================
+// GLOBAL APPLICATION STATE
+// ==========================================================================
+const state = {
+  language: 'zh',
+  theme: 'light',
+  platesCount: 0,
+  unlockedToys: []
 };
 
 // ==========================================================================
