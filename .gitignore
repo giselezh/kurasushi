@@ -1,0 +1,54 @@
+# OS-specific files (System temporary files)
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Thumbs.db:encryptable
+desktop.ini
+
+# IDEs and Text Editors (Local workspace configurations)
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+
+# Local logs and diagnostic caches
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.eslintcache
+
+# Local backup files
+*.bak
+*.tmp
+*.temp
+# -------------------------------------------------------------------
+# DEPENDENCIES & SENSITIVE FILES (Add these!)
+# -------------------------------------------------------------------
+
+# Third-party packages downloaded by your project
+node_modules/
+jspm_packages/
+
+# Production build outputs (the compiled SPA)
+dist/
+build/
+out/
+
+# Secret local environment variables (API keys, etc.)
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Build logs and test coverage
+.npm/
+coverage/

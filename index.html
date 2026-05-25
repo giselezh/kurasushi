@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="zh-TW" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>藏壽司台灣企業策略個案分析與互動體驗實驗室 - Kura Sushi Taiwan Case Study & Lab</title>
+  
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="藏壽司台灣（Kura Sushi Taiwan）企業策略分析：結合 PESTEL, Porter's Five Forces, VRIO 矩陣、價值鏈與 Ansoff 成長矩陣，並提供 3D/SVG 互動扭蛋機與迴轉壽司實驗室體驗。">
+  <meta name="keywords" content="藏壽司, 台灣藏壽司, 企業策略, 扭蛋機, 迴轉壽司, 羅世民 教授, Kura Sushi Taiwan, Bikkura Pon, Case Study">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+TC:wght@300;400;500;700;900&family=Outfit:wght@300;400;500;600;700;800&family=ZCOOL+XiaoWei&display=swap" rel="stylesheet">
+  
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Dynamic Reading Progress Bar -->
+  <div id="progress-bar"></div>
+
+  <!-- STICKY HEADER -->
+  <header class="main-header">
+    <div class="header-container">
+      <div class="logo-section">
+        <span class="brand-badge">藏 KURA</span>
+        <h1 class="brand-title" data-i18n="nav.title">台灣藏壽司策略個案</h1>
+      </div>
+      
+      <!-- Sticky Navigation Links (Desktop) -->
+      <nav class="desktop-nav">
+        <a href="#team" class="nav-link" data-i18n="nav.team">團隊介紹</a>
+        <a href="#summary" class="nav-link" data-i18n="nav.summary">執行摘要</a>
+        <a href="#intro" class="nav-link" data-i18n="nav.intro">公司簡介</a>
+        <a href="#external" class="nav-link" data-i18n="nav.external">外部環境</a>
+        <a href="#internal" class="nav-link" data-i18n="nav.internal">內部資源</a>
+        <a href="#growth" class="nav-link" data-i18n="nav.growth">成長策略</a>
+        <a href="#lab" class="nav-link highlight" data-i18n="nav.lab">互動實驗室</a>
+      </nav>
+
+      <!-- Action Toggles -->
+      <div class="action-toggles">
+        <!-- Bilingual Switcher -->
+        <button id="lang-toggle" class="btn-toggle" title="Switch Language / 切換語言" aria-label="Toggle Language">
+          <i data-lucide="languages"></i>
+          <span class="toggle-text">EN</span>
+        </button>
+
+        <!-- Dark Mode Switcher -->
+        <button id="theme-toggle" class="btn-toggle" title="Toggle Theme / 亮暗模式" aria-label="Toggle Theme">
+          <i data-lucide="moon" class="icon-dark"></i>
+          <i data-lucide="sun" class="icon-light" style="display:none;"></i>
+        </button>
+
+        <!-- Glossary Drawer Toggle -->
+        <button id="glossary-toggle" class="btn-toggle" title="Glossary / 詞彙表" aria-label="Open Glossary">
+          <i data-lucide="book-open"></i>
+        </button>
+
+        <!-- Mobile Menu Toggle -->
+        <button id="mobile-menu-toggle" class="btn-toggle mobile-only" aria-label="Toggle Mobile Menu">
+          <i data-lucide="menu"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Dropdown Menu -->
+  <div id="mobile-nav-menu" class="mobile-nav-menu">
+    <a href="#team" class="mobile-nav-link" data-i18n="nav.team">團隊介紹</a>
+    <a href="#summary" class="mobile-nav-link" data-i18n="nav.summary">執行摘要</a>
+    <a href="#intro" class="mobile-nav-link" data-i18n="nav.intro">公司簡介</a>
+    <a href="#external" class="mobile-nav-link" data-i18n="nav.external">外部環境</a>
+    <a href="#internal" class="mobile-nav-link" data-i18n="nav.internal">內部資源</a>
+    <a href="#growth" class="mobile-nav-link" data-i18n="nav.growth">成長策略</a>
+    <a href="#lab" class="mobile-nav-link highlight" data-i18n="nav.lab">互動實驗室</a>
+  </div>
+
+  <!-- HERO & HOMEPAGE VISUAL DASHBOARD NAV (首頁視覺化導航) -->
+  <section class="hero-section">
+    <div class="hero-glow"></div>
+    <div class="hero-container">
+      <div class="hero-content">
+        <span class="hero-tag" data-i18n="hero.tag">MBA / 企業管理策略專題</span>
+        <h2 class="hero-title" data-i18n="hero.title">傳統江戶美食與現代智慧科技的究極融合</h2>
+        <p class="hero-subtitle" data-i18n="hero.subtitle">台灣藏壽司（Kura Sushi Taiwan）商業策略個案分析與高互動體驗開發實驗室</p>
+      </div>
+      
+      <!-- Visual Dashboard Navigation Directory -->
+      <div class="dashboard-nav-grid">
+        <a href="#team" class="dash-card card-team">
+          <div class="dash-icon"><i data-lucide="users"></i></div>
+          <div class="dash-info">
+            <h3 data-i18n="dash.team.title">學術研究團隊</h3>
+            <p data-i18n="dash.team.desc">成員介紹與 D-ID 影音報告</p>
+          </div>
+        </a>
+        <a href="#summary" class="dash-card card-summary">
+          <div class="dash-icon"><i data-lucide="file-text"></i></div>
+          <div class="dash-info">
+            <h3 data-i18n="dash.summary.title">執行摘要</h3>
+            <p data-i18n="dash.summary.desc">個案研究核心綜述與關鍵數據</p>
+          </div>
+        </a>
+        <a href="#intro" class="dash-card card-intro">
+          <div class="dash-icon"><i data-lucide="building"></i></div>
+          <div class="dash-info">
+            <h3 data-i18n="dash.intro.title">品牌與公司簡介</h3>
+            <p data-i18n="dash.intro.desc">創始理念、核心價值與台灣佈局</p>
+          </div>
+        </a>
+        <a href="#external" class="dash-card card-external">
+          <div class="dash-icon"><i data-lucide="globe"></i></div>
+          <div class="dash-info">
+            <h3 data-i18n="dash.external.title">外部與環境分析</h3>
+            <p data-i18n="dash.external.desc">PESTEL 與波特五力產業環境分析</p>
+          </div>
+        </a>
+        <a href="#internal" class="dash-card card-internal">
+          <div class="dash-icon"><i data-lucide="bar-chart-3"></i></div>
+          <div class="dash-info">
+            <h3 data-i18n="dash.internal.title">內部資源與競爭力</h3>
+            <p data-i18n="dash.internal.desc">VRIO 矩陣評估與核心價值鏈流動</p>
+          </div>
+        </a>
+        <a href="#growth" class="dash-card card-growth">
+          <div class="dash-icon"><i data-lucide="trending-up"></i></div>
+          <div class="dash-info">
+            <h3 data-i18n="dash.growth.title">成長策略與挑戰</h3>
+            <p data-i18n="dash.growth.desc">Ansoff 矩陣擴張模式與未來隱憂</p>
+          </div>
+        </a>
+        <a href="#lab" class="dash-card card-lab highlighted">
+          <div class="dash-badge" data-i18n="dash.lab.badge">體驗</div>
+          <div class="dash-icon"><i data-lucide="flask-conical"></i></div>
+          <div class="dash-info">
+            <h3 data-i18n="dash.lab.title">互動體驗實驗室</h3>
+            <p data-i18n="dash.lab.desc">迴轉壽司鏈、點餐平板與扭蛋機</p>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- MAIN MAIN CONTAINER -->
+  <main class="main-content-area">
+
+    <!-- 1. TEAM MEMBER INTRODUCTIONS -->
+    <section id="team" class="content-section">
+      <div class="section-header">
+        <h2 class="section-title" data-i18n="team.title">研究團隊與 D-ID 簡報</h2>
+        <div class="audio-guide-wrapper">
+          <button class="btn-audio-guide" data-section="team" title="Play Audio Guide">
+            <i data-lucide="volume-2"></i>
+            <span data-i18n="audio.guide">語音導讀</span>
+          </button>
+        </div>
+      </div>
+      <p class="section-subtitle" data-i18n="team.subtitle">深入淺出的個案報告，結合先進 AI 人像技術（D-ID）進行影音策略闡述。</p>
+      
+      <div class="team-grid" id="team-members-container">
+        <!-- Dynmically Rendered in team.js -->
+      </div>
+    </section>
+
+    <!-- 2. EXECUTIVE SUMMARY -->
+    <section id="summary" class="content-section">
+      <div class="section-header">
+        <h2 class="section-title" data-i18n="summary.title">執行摘要 (Executive Summary)</h2>
+        <div class="audio-guide-wrapper">
+          <button class="btn-audio-guide" data-section="summary" title="Play Audio Guide">
+            <i data-lucide="volume-2"></i>
+            <span data-i18n="audio.guide">語音導讀</span>
+          </button>
+        </div>
+      </div>
+      
+      <div class="summary-grid">
+        <div class="summary-text-panel card" id="summary-content">
+          <!-- Dynmically Localized -->
+        </div>
+        
+        <!-- Interactive KPIs Widget -->
+        <div class="kpi-widget card">
+          <h3 class="kpi-widget-title" data-i18n="summary.kpi.title">藏壽司台灣關鍵指標 (2025)</h3>
+          <div class="kpi-grid">
+            <div class="kpi-item">
+              <span class="kpi-val" id="kpi-stores">56+</span>
+              <span class="kpi-lbl" data-i18n="summary.kpi.stores">營運分店數</span>
+            </div>
+            <div class="kpi-item">
+              <span class="kpi-val" id="kpi-revenue">NT$ 5.1B+</span>
+              <span class="kpi-lbl" data-i18n="summary.kpi.revenue">年營收估值</span>
+            </div>
+            <div class="kpi-item">
+              <span class="kpi-val" id="kpi-satisfaction">94%</span>
+              <span class="kpi-lbl" data-i18n="summary.kpi.satisfaction">客戶滿意度</span>
+            </div>
+            <div class="kpi-item">
+              <span class="kpi-val" id="kpi-loyalty">1.2M+</span>
+              <span class="kpi-lbl" data-i18n="summary.kpi.loyalty">App 會員數</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. BRIEF INTRODUCTION TO THE COMPANY -->
+    <section id="intro" class="content-section">
+      <div class="section-header">
+        <h2 class="section-title" data-i18n="intro.title">公司與品牌簡介</h2>
+        <div class="audio-guide-wrapper">
+          <button class="btn-audio-guide" data-section="intro" title="Play Audio Guide">
+            <i data-lucide="volume-2"></i>
+            <span data-i18n="audio.guide">語音導讀</span>
+          </button>
+        </div>
+      </div>
+      
+      <div class="intro-layout">
+        <div class="intro-desc card" id="intro-text">
+          <!-- Dynmically Localized -->
+        </div>
+        
+        <!-- Value Circle Widget -->
+        <div class="intro-values card">
+          <h3 class="values-title" data-i18n="intro.values.title">三大核心精神 (Brand Pillars)</h3>
+          <div class="values-flow">
+            <div class="value-node node-red">
+              <div class="node-icon"><i data-lucide="shield-check"></i></div>
+              <h4 data-i18n="intro.values.v1.title">美味安全 (Safety)</h4>
+              <p data-i18n="intro.values.v1.desc">專利保鮮蓋「鮮度君」，徹底隔絕病菌與飛沫感染。</p>
+            </div>
+            <div class="value-node node-gold">
+              <div class="node-icon"><i data-lucide="sparkles"></i></div>
+              <h4 data-i18n="intro.values.v1_2.title">極致美味 (Quality)</h4>
+              <p data-i18n="intro.values.v1_2.desc">嚴選高品質無添加食材，完美傳承日本江戸前風味。</p>
+            </div>
+            <div class="value-node node-green">
+              <div class="node-icon"><i data-lucide="smile"></i></div>
+              <h4 data-i18n="intro.values.v1_3.title">娛樂體驗 (Entertainment)</h4>
+              <p data-i18n="intro.values.v1_3.desc">經典扭蛋機 Bikkura Pon 結合餐盤自動回收，趣味十足。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. EXTERNAL & INDUSTRY ENVIRONMENT ANALYSIS -->
+    <section id="external" class="content-section">
+      <div class="section-header">
+        <h2 class="section-title" data-i18n="external.title">外部與產業環境分析</h2>
+        <div class="audio-guide-wrapper">
+          <button class="btn-audio-guide" data-section="external" title="Play Audio Guide">
+            <i data-lucide="volume-2"></i>
+            <span data-i18n="audio.guide">語音導讀</span>
+          </button>
+        </div>
+      </div>
+      <p class="section-subtitle" data-i18n="external.subtitle">深入探討台灣餐飲市場的總體環境力量（PESTEL）與迴轉壽司產業內部的五力鬥爭。</p>
+
+      <!-- PESTEL Accordion Widget -->
+      <div class="pestel-box card">
+        <h3 class="box-title" data-i18n="external.pestel.title">PESTEL 總體環境評估</h3>
+        <div class="pestel-accordion" id="pestel-accordion-container">
+          <!-- Dynmically Rendered in case.js -->
+        </div>
+      </div>
+
+      <!-- Porter's Five Forces Radar Visual -->
+      <div class="porter-box card">
+        <div class="porter-layout">
+          <div class="porter-chart-area">
+            <h3 class="box-title" data-i18n="external.porter.title">波特五力模型分析</h3>
+            <div class="porter-visual-radar" id="porter-radar">
+              <!-- Inline Interactive SVG representing Porter's Forces -->
+            </div>
+          </div>
+          <div class="porter-details" id="porter-details-pane">
+            <div class="porter-instruction-prompt" data-i18n="external.porter.prompt">
+              💡 點擊雷達圖中的各個競爭力量，即可在此面板查看深度的市場策略解讀。
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. INTERNAL RESOURCES & CORE COMPETENCIES -->
+    <section id="internal" class="content-section">
+      <div class="section-header">
+        <h2 class="section-title" data-i18n="internal.title">內部資源與核心競爭力</h2>
+        <div class="audio-guide-wrapper">
+          <button class="btn-audio-guide" data-section="internal" title="Play Audio Guide">
+            <i data-lucide="volume-2"></i>
+            <span data-i18n="audio.guide">語音導讀</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Kura Value Chain Widget -->
+      <div class="value-chain-box card">
+        <h3 class="box-title" data-i18n="internal.chain.title">藏壽司特色價值鏈（Value Chain）</h3>
+        <div class="value-chain-flow" id="value-chain-container">
+          <!-- Dynmically Localized -->
+        </div>
+      </div>
+
+      <!-- VRIO Framework Table -->
+      <div class="vrio-box card">
+        <h3 class="box-title" data-i18n="internal.vrio.title">核心資源 VRIO 評估矩陣</h3>
+        <div class="vrio-table-wrapper">
+          <table class="vrio-table">
+            <thead>
+              <tr>
+                <th data-i18n="internal.vrio.th.resource">核心資源與能力</th>
+                <th class="center">Value</th>
+                <th class="center">Rarity</th>
+                <th class="center">Inimitability</th>
+                <th class="center">Organization</th>
+                <th data-i18n="internal.vrio.th.implication">競爭意涵 (Implications)</th>
+              </tr>
+            </thead>
+            <tbody id="vrio-table-body">
+              <!-- Dynmically Rendered in case.js with high fidelity hover highlights -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. CORPORATE GROWTH STRATEGY & FUTURE CHALLENGES -->
+    <section id="growth" class="content-section">
+      <div class="section-header">
+        <h2 class="section-title" data-i18n="growth.title">企業成長策略與未來挑戰</h2>
+        <div class="audio-guide-wrapper">
+          <button class="btn-audio-guide" data-section="growth" title="Play Audio Guide">
+            <i data-lucide="volume-2"></i>
+            <span data-i18n="audio.guide">語音導讀</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Ansoff Growth Matrix -->
+      <div class="ansoff-box card">
+        <h3 class="box-title" data-i18n="growth.ansoff.title">安索夫成長矩陣 (Ansoff Matrix)</h3>
+        <p class="matrix-hint" data-i18n="growth.ansoff.hint">💡 點擊矩陣中不同的成長象限，可查看藏壽司採取的對應市場拓張模式。</p>
+        <div class="ansoff-grid">
+          <div class="ansoff-quadrant quadrant-penetration" data-quadrant="penetration">
+            <div class="quadrant-badge" data-i18n="growth.ansoff.penetration">市場滲透</div>
+            <div class="quadrant-core" data-i18n="growth.ansoff.quad1">現有產品 × 現有市場</div>
+          </div>
+          <div class="ansoff-quadrant quadrant-product" data-quadrant="product">
+            <div class="quadrant-badge" data-i18n="growth.ansoff.product">產品開發</div>
+            <div class="quadrant-core" data-i18n="growth.ansoff.quad2">全新產品 × 現有市場</div>
+          </div>
+          <div class="ansoff-quadrant quadrant-market" data-quadrant="market">
+            <div class="quadrant-badge" data-i18n="growth.ansoff.market">市場開發</div>
+            <div class="quadrant-core" data-i18n="growth.ansoff.quad3">現有產品 × 全新市場</div>
+          </div>
+          <div class="ansoff-quadrant quadrant-diversification" data-quadrant="diversification">
+            <div class="quadrant-badge" data-i18n="growth.ansoff.diversification">多角化</div>
+            <div class="quadrant-core" data-i18n="growth.ansoff.quad4">全新產品 × 全新市場</div>
+          </div>
+        </div>
+        
+        <div class="ansoff-details-card" id="ansoff-details">
+          <!-- Interactive Output Pane -->
+        </div>
+      </div>
+
+      <!-- Future Strategic Challenges -->
+      <div class="challenges-box card">
+        <h3 class="box-title" data-i18n="growth.challenges.title">未來策略性隱憂與挑戰</h3>
+        <div class="challenges-list" id="challenges-container">
+          <!-- Dynmically Localized -->
+        </div>
+      </div>
+    </section>
+
+    <!-- 7. CONCLUSION -->
+    <section id="conclusion" class="content-section">
+      <div class="section-header">
+        <h2 class="section-title" data-i18n="conclusion.title">個案分析結論</h2>
+        <div class="audio-guide-wrapper">
+          <button class="btn-audio-guide" data-section="conclusion" title="Play Audio Guide">
+            <i data-lucide="volume-2"></i>
+            <span data-i18n="audio.guide">語音導讀</span>
+          </button>
+        </div>
+      </div>
+      
+      <div class="conclusion-box card" id="conclusion-content">
+        <!-- Dynmically Localized -->
+      </div>
+    </section>
+
+    <!-- 8. APPENDIX A: INTERACTIVE LAB -->
+    <section id="lab" class="content-section">
+      <div class="section-header">
+        <h2 class="section-title" data-i18n="lab.title">附錄甲：互動體驗實驗室</h2>
+      </div>
+      <p class="section-subtitle" data-i18n="lab.subtitle">這是一個完全擬真的台灣藏壽司餐桌互動體驗。請在迴轉鏈上拿取壽司，或利用平板加點，累計吃完 5 個餐盤後投入回收槽，挑戰扭蛋機吧！</p>
+      
+      <div class="lab-workspace-grid">
+        
+        <!-- Conveyor Belt Module -->
+        <div class="lab-conveyor-belt-module card">
+          <div class="module-title">
+            <span class="pulse-indicator"></span>
+            <span data-i18n="lab.conveyor.title">特快雙層迴轉鏈條 (Double Conveyor Belt)</span>
+          </div>
+          <!-- Conveyor viewport -->
+          <div class="conveyor-container">
+            <!-- Top express bullet belt -->
+            <div class="express-lane" id="express-lane">
+              <div class="express-track-bg"></div>
+              <div class="bullet-train" id="bullet-train">
+                <!-- Bullet train SVG dynamically slides in to deliver ordered item -->
+              </div>
+            </div>
+            <!-- Bottom regular belt -->
+            <div class="regular-lane" id="regular-lane">
+              <!-- Regular conveyor plates animated loop -->
+            </div>
+          </div>
+          <div class="lane-caption" data-i18n="lab.conveyor.hint">
+            💡 下層為一般慢速鏈：點擊壽司盤即可「拿取食用」；上層為急行新幹線：點餐平板下單後，專車會以極速自動配送至您的座位！
+          </div>
+        </div>
+
+        <!-- Dispenser Machine + Toy Drawer Panel -->
+        <div class="lab-gachapon-dispenser card">
+          <div class="dispenser-layout">
+            
+            <!-- Bikkura Pon Machine visual -->
+            <div class="bikkura-pon-column">
+              <div class="machine-head">
+                <span class="machine-label">BIKKURA PON</span>
+              </div>
+              <div class="gachapon-machine-body">
+                <!-- Glowing glass capsule dome -->
+                <div class="capsule-dome" id="capsule-dome">
+                  <!-- Visual animated spheres inside -->
+                  <div class="capsule-sphere s1"></div>
+                  <div class="capsule-sphere s2"></div>
+                  <div class="capsule-sphere s3"></div>
+                  <div class="capsule-sphere s4"></div>
+                  <div class="capsule-sphere s5"></div>
+                </div>
+                <!-- Interactive Tablet Screen on the Machine -->
+                <div class="machine-screen" id="machine-screen">
+                  <div class="screen-idle" id="screen-idle-state">
+                    <div class="current-plates-count">
+                      <span class="plates-num" id="current-inserted-plates">0</span>
+                      <span class="plates-slash">/</span>
+                      <span class="plates-max">5</span>
+                    </div>
+                    <div class="screen-prompt" data-i18n="lab.machine.screen.idle">投幣孔放入餐盤</div>
+                  </div>
+                  <div class="screen-game" id="screen-game-state" style="display:none;">
+                    <!-- Game canvas / UI dynamically animated in bikkurapon.js -->
+                  </div>
+                </div>
+                <!-- Dispenser exit hole -->
+                <div class="dispenser-chute">
+                  <div class="chute-opening"></div>
+                  <div class="dispensed-capsule" id="dispensed-capsule-prize"></div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Tablet Ordering Console -->
+            <div class="tablet-console-column">
+              <div class="tablet-outer">
+                <div class="tablet-screen-bezel">
+                  <div class="tablet-content" id="tablet-content-area">
+                    <!-- Dynamic Touchscreen UI elements rendered in tablet.js -->
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Virtual Plate Insertion Slot -->
+              <div class="plate-disposal-slot-wrapper">
+                <div class="disposal-label" data-i18n="lab.disposal.label">盤子投入口 (Plate Disposal Slot)</div>
+                <div class="slot-container" id="plate-disposal-slot">
+                  <div class="slot-opening"></div>
+                  <div class="plate-slide-effect" id="plate-slide"></div>
+                </div>
+                <button class="btn-insert-plates" id="btn-insert-five" disabled>
+                  <i data-lucide="log-in"></i>
+                  <span data-i18n="lab.disposal.btn">放入五個餐盤</span>
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Toy Cabinet Module -->
+        <div class="lab-toy-cabinet card">
+          <div class="cabinet-header">
+            <h3><i data-lucide="trophy" class="accent-icon"></i> <span data-i18n="lab.cabinet.title">我的扭蛋收藏閣 (My Capsule Toys)</span></h3>
+            <span class="collection-count"><span id="cabinet-count">0</span> / 6 Unlocked</span>
+          </div>
+          <div class="cabinet-shelves" id="toy-cabinet-shelves">
+            <!-- 6 beautiful toy slots -->
+          </div>
+        </div>
+
+        <!-- Reservation & Queue Module -->
+        <div class="lab-branch-queue card">
+          <div class="queue-header">
+            <h3><i data-lucide="ticket" class="accent-icon"></i> <span data-i18n="lab.queue.title">台灣旗艦分店虛擬排隊系統</span></h3>
+          </div>
+          <div class="queue-layout">
+            <div class="queue-form-side">
+              <div class="form-group">
+                <label data-i18n="lab.queue.select">選擇分店 (Select Branch)</label>
+                <select id="queue-branch-select" class="queue-select">
+                  <!-- Taiwan flagship options -->
+                </select>
+              </div>
+              <div class="branch-status-card" id="branch-status-info">
+                <!-- Dynmically loaded wait times -->
+              </div>
+              <button class="btn-primary" id="btn-draw-ticket">
+                <i data-lucide="plus-circle"></i>
+                <span data-i18n="lab.queue.btn">抽取預約號碼牌</span>
+              </button>
+            </div>
+            
+            <div class="queue-ticket-side">
+              <div class="virtual-ticket" id="virtual-ticket-pane">
+                <div class="ticket-watermark">KURA</div>
+                <div class="ticket-idle" id="ticket-idle-prompt" data-i18n="lab.queue.ticket.idle">
+                  🎟️ 請在左側選擇分店並抽取號碼牌，系統將為您生成包含防偽條碼與實時倒計時的預約票券。
+                </div>
+                <div class="ticket-active" id="ticket-active-content" style="display:none;">
+                  <!-- Ticket Details -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 9. APPENDIX B: DATA SOURCES -->
+    <section id="references" class="content-section">
+      <div class="section-header">
+        <h2 class="section-title" data-i18n="references.title">附錄乙：學術文獻與數據來源</h2>
+      </div>
+      <div class="references-box card">
+        <ul class="references-list" id="references-list-content">
+          <!-- APA Citation rows -->
+        </ul>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- GLOSSARY OF TERMS DRAWER (專有名詞側邊欄) -->
+  <div id="glossary-drawer" class="glossary-drawer">
+    <div class="drawer-header">
+      <h3><i data-lucide="book-marked"></i> <span data-i18n="glossary.drawer.title">專有名詞小百科</span></h3>
+      <button id="glossary-close" class="btn-close" aria-label="Close Glossary"><i data-lucide="x"></i></button>
+    </div>
+    <div class="drawer-search">
+      <input type="text" id="glossary-search-input" placeholder="搜尋專有名詞 (Search terms)..." aria-label="Search glossary">
+    </div>
+    <div class="drawer-list" id="glossary-drawer-list">
+      <!-- Terms list dynamically rendered in glossary.js -->
+    </div>
+  </div>
+  <div id="drawer-overlay" class="drawer-overlay"></div>
+
+  <!-- THEATER D-ID VIDEO MODAL (D-ID 影音劇院彈窗) -->
+  <div id="video-theater" class="video-theater-modal">
+    <div class="theater-outer">
+      <div class="theater-header">
+        <h3 id="theater-member-name">王大明 - 策略簡報</h3>
+        <button id="theater-close" class="btn-close-theater" aria-label="Close Video"><i data-lucide="x"></i></button>
+      </div>
+      <div class="theater-screen">
+        <!-- Interactive high-fidelity simulated/actual video player -->
+        <div class="simulated-player" id="simulated-player-container">
+          <video id="did-video-element" controls playsinline>
+            <source src="" type="video/mp4">
+            Your browser does not support the video tag.
+          </video>
+          <!-- Interactive caption overlay -->
+          <div class="caption-overlay" id="did-caption-overlay"></div>
+        </div>
+      </div>
+      <div class="theater-captions-control">
+        <button class="btn-control" id="btn-toggle-captions">
+          <i data-lucide="subtitles"></i>
+          <span data-i18n="theater.captions">字幕開關 (Captions)</span>
+        </button>
+        <span class="theater-indicator" id="theater-play-status">D-ID Presenter v2</span>
+      </div>
+    </div>
+  </div>
+  <div id="theater-overlay" class="theater-overlay"></div>
+
+  <!-- FOOTER WITH PROF. ATTRIBUTION (指導教授頁尾) -->
+  <footer class="main-footer">
+    <div class="footer-container">
+      <div class="footer-left">
+        <span class="footer-brand">KURA SUSHI TAIWAN CASE STUDY</span>
+        <p class="copyright" data-i18n="footer.copyright">&copy; 2026 國立大學企業管理研究所. All rights reserved.</p>
+      </div>
+      <div class="footer-center">
+        <!-- CRITICAL PROFESSOR INSTRUCTOR ATTRIBUTION -->
+        <span class="instructor-credit">
+          <i data-lucide="award"></i> 
+          指導教授：羅世民 教授 &nbsp;|&nbsp; Instructor: Prof. Shihmin Lo
+        </span>
+      </div>
+      <div class="footer-right">
+        <span class="footer-date" data-i18n="footer.date">個案發布日期：2026年5月</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Unified consolidated script -->
+  <script src="app.js"></script>
+</body>
+</html>
