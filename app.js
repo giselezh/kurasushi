@@ -9,7 +9,7 @@
 
 const translations = {
   zh: {
-    "nav.title": "台灣藏壽司策略個案",
+    "nav.title": "亞洲藏壽司 (2754)",
     "nav.team": "團隊介紹",
     "nav.summary": "執行摘要",
     "nav.intro": "公司簡介",
@@ -95,7 +95,7 @@ const translations = {
     "footer.date": "個案發布日期：2026年5月"
   },
   en: {
-    "nav.title": "Kura Sushi Case Study",
+    "nav.title": "Kura Sushi Asia Co., Ltd.(2754)",
     "nav.team": "Team",
     "nav.summary": "Summary",
     "nav.intro": "Company Intro",
