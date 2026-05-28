@@ -1799,9 +1799,9 @@ function generateQueueTicket(branchId) {
 // 11. MAIN APP STATE COORDINATOR & STATE BOOTSTRAPPER
 // ==========================================================================
 function bootApplication() {
+  initializeComponents();
   syncLanguageUI();
   syncThemeUI();
-  initializeComponents();
   bindGlobalEvents();
   lucide.createIcons();
 }
@@ -1843,6 +1843,7 @@ function initStrategyWorkspace() {
           <rect x="42" y="55" width="16" height="24" rx="2" class="sushi-nori" transform="rotate(-15 50 67)" />
         </svg>
       </button>
+      <span class="sushi-menu-label" data-i18n="sushi.menu.label">menu</span>
       <div class="plates-submenu" id="plates-submenu">
         <button class="plate-menu-btn plate-tp0" data-tp="0">
           <span>0</span>
@@ -1862,7 +1863,13 @@ function initStrategyWorkspace() {
         </button>
       </div>
     `;
-    document.body.appendChild(menu);
+    
+    const logoSection = document.querySelector('.logo-section');
+    if (logoSection) {
+      logoSection.insertBefore(menu, logoSection.firstChild);
+    } else {
+      document.body.appendChild(menu);
+    }
 
     // Bind triggers
     const trigger = document.getElementById('sushi-trigger-btn');
@@ -1991,6 +1998,11 @@ function translateWorkspaceLabels() {
   // Update tooltips in the floating menu
   const menu = document.getElementById('floating-sushi-menu');
   if (menu) {
+    const labelEl = menu.querySelector('.sushi-menu-label');
+    if (labelEl) {
+      labelEl.textContent = state.language === 'zh' ? '選單' : 'MENU';
+    }
+
     const tooltips = menu.querySelectorAll('.plate-tooltip');
     const tooltipTexts = {
       zh: [
@@ -3104,8 +3116,8 @@ function bindGlobalEvents() {
       const textSpan = document.getElementById('lang-toggle').querySelector('.toggle-text');
       if (textSpan) textSpan.textContent = state.language === 'zh' ? 'EN' : '中文';
       
-      syncLanguageUI();
       initializeComponents();
+      syncLanguageUI();
     });
   }
 
