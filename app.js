@@ -466,7 +466,10 @@ const state = {
   language: 'zh',
   theme: 'light',
   platesCount: 0,
-  unlockedToys: []
+  unlockedToys: [],
+  activeTPIndex: 0,
+  tpFinancialMode: 'revenue',
+  tpRoadmapIndex: 0
 };
 
 // ==========================================================================
@@ -1815,6 +1818,1252 @@ function initializeComponents() {
   
   initGlossaryModule();
   initAudioGuidesModule();
+
+  initStrategyWorkspace();
+}
+
+// ==========================================================================
+// 12. HIGH-FIDELITY BILINGUAL STRATEGY WORKSPACE & SIMULATOR ENGINE
+// ==========================================================================
+
+function initStrategyWorkspace() {
+  // 1. Inject Floating Sushi Menu container if not present
+  let menu = document.getElementById('floating-sushi-menu');
+  if (!menu) {
+    menu = document.createElement('div');
+    menu.id = 'floating-sushi-menu';
+    menu.className = 'floating-sushi-menu';
+    menu.innerHTML = `
+      <button class="sushi-button" id="sushi-trigger-btn" title="Strategy Portal / 策略分析門戶">
+        <svg viewBox="0 0 100 100" class="sushi-svg">
+          <ellipse cx="50" cy="70" rx="35" ry="18" class="sushi-rice" />
+          <path d="M 15 50 Q 50 30 85 50 L 85 70 Q 50 50 15 70 Z" class="sushi-salmon" />
+          <path d="M 25 57 Q 50 42 75 57" class="sushi-marbling" />
+          <path d="M 35 62 Q 50 48 65 62" class="sushi-marbling" />
+          <rect x="42" y="55" width="16" height="24" rx="2" class="sushi-nori" transform="rotate(-15 50 67)" />
+        </svg>
+      </button>
+      <div class="plates-submenu" id="plates-submenu">
+        <button class="plate-menu-btn plate-tp0" data-tp="0">
+          <span>0</span>
+          <div class="plate-tooltip plate-tp0">TP 0: Overview & Finances</div>
+        </button>
+        <button class="plate-menu-btn plate-tp1" data-tp="1">
+          <span>1</span>
+          <div class="plate-tooltip plate-tp1">TP 1: External Analysis</div>
+        </button>
+        <button class="plate-menu-btn plate-tp2" data-tp="2">
+          <span>2</span>
+          <div class="plate-tooltip plate-tp2">TP 2: Internal Analysis</div>
+        </button>
+        <button class="plate-menu-btn plate-tp3" data-tp="3">
+          <span>3</span>
+          <div class="plate-tooltip plate-tp3">TP 3: Growth & Challenges</div>
+        </button>
+      </div>
+    `;
+    document.body.appendChild(menu);
+
+    // Bind triggers
+    const trigger = document.getElementById('sushi-trigger-btn');
+    trigger.addEventListener('click', () => {
+      sfx.click();
+      menu.classList.toggle('open');
+    });
+
+    // Bind plate buttons
+    menu.querySelectorAll('.plate-menu-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const tpIdx = parseInt(btn.getAttribute('data-tp'));
+        menu.classList.remove('open');
+        openTPPage(tpIdx);
+      });
+    });
+  }
+
+  // 2. Inject Fullscreen Immersive Glassmorphism Workspace Overlay if not present
+  let overlay = document.getElementById('tp-workspace-overlay');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'tp-workspace-overlay';
+    overlay.className = 'tp-workspace-overlay';
+    overlay.innerHTML = `
+      <div class="tp-workspace-glass">
+        <aside class="tp-sidebar">
+          <div class="tp-sidebar-header">
+            <h2 id="tp-ws-sidebar-header-title">策略分析個案</h2>
+            <p id="tp-ws-sidebar-header-sub">預習課題 / 學術報告</p>
+          </div>
+          <nav>
+            <ul class="tp-nav-list">
+              <li class="tp-nav-item active" data-tp="0">
+                <span class="tp-nav-tag">TP 0</span>
+                <span class="tp-nav-title">企業概覽與財務績效</span>
+              </li>
+              <li class="tp-nav-item" data-tp="1">
+                <span class="tp-nav-tag">TP 1</span>
+                <span class="tp-nav-title">外部戰略環境分析</span>
+              </li>
+              <li class="tp-nav-item" data-tp="2">
+                <span class="tp-nav-tag">TP 2</span>
+                <span class="tp-nav-title">內部資源與能力評估</span>
+              </li>
+              <li class="tp-nav-item" data-tp="3">
+                <span class="tp-nav-tag">TP 3</span>
+                <span class="tp-nav-title">成長策略與未來挑戰</span>
+              </li>
+            </ul>
+          </nav>
+          <div class="tp-sidebar-footer">
+            <button class="btn-tp-back" id="btn-tp-workspace-close">
+              <i data-lucide="home"></i>
+              <span id="tp-ws-back-label">返回首頁</span>
+            </button>
+          </div>
+        </aside>
+        <main class="tp-content-wrapper" id="tp-content-wrapper"></main>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+
+    // Bind close
+    document.getElementById('btn-tp-workspace-close').addEventListener('click', () => {
+      sfx.click();
+      overlay.classList.remove('active');
+    });
+
+    // Bind sidebar navigation links
+    overlay.querySelectorAll('.tp-nav-item').forEach(item => {
+      item.addEventListener('click', () => {
+        const tpIdx = parseInt(item.getAttribute('data-tp'));
+        openTPPage(tpIdx);
+      });
+    });
+  }
+
+  // Force label translation based on active site state
+  translateWorkspaceLabels();
+}
+
+function translateWorkspaceLabels() {
+  const sidebarTitle = document.getElementById('tp-ws-sidebar-header-title');
+  const sidebarSub = document.getElementById('tp-ws-sidebar-header-sub');
+  const backLabel = document.getElementById('tp-ws-back-label');
+
+  // Update nav labels in sidebar dynamically
+  const navItems = document.querySelectorAll('.tp-nav-item');
+  const navLabels = {
+    zh: [
+      { tag: "TP 0", title: "企業概覽與財務績效" },
+      { tag: "TP 1", title: "外部戰略環境分析" },
+      { tag: "TP 2", title: "內部資源與能力評估" },
+      { tag: "TP 3", title: "成長策略與未來挑戰" }
+    ],
+    en: [
+      { tag: "TP 0", title: "Overview & Finances" },
+      { tag: "TP 1", title: "External Analysis" },
+      { tag: "TP 2", title: "Internal Analysis" },
+      { tag: "TP 3", title: "Growth & Challenges" }
+    ]
+  };
+
+  const currentLang = state.language === 'zh' ? 'zh' : 'en';
+  
+  if (navItems.length === 4) {
+    navItems.forEach((item, idx) => {
+      const tagEl = item.querySelector('.tp-nav-tag');
+      const titleEl = item.querySelector('.tp-nav-title');
+      if (tagEl) tagEl.textContent = navLabels[currentLang][idx].tag;
+      if (titleEl) titleEl.textContent = navLabels[currentLang][idx].title;
+    });
+  }
+
+  if (state.language === 'zh') {
+    if (sidebarTitle) sidebarTitle.textContent = "策略分析個案";
+    if (sidebarSub) sidebarSub.textContent = "預習課題 / 學術報告";
+    if (backLabel) backLabel.textContent = "返回首頁";
+  } else {
+    if (sidebarTitle) sidebarTitle.textContent = "STRATEGY PORTAL";
+    if (sidebarSub) sidebarSub.textContent = "Technical Papers / Case Study";
+    if (backLabel) backLabel.textContent = "Back to Main";
+  }
+
+  // Update tooltips in the floating menu
+  const menu = document.getElementById('floating-sushi-menu');
+  if (menu) {
+    const tooltips = menu.querySelectorAll('.plate-tooltip');
+    const tooltipTexts = {
+      zh: [
+        "TP 0: 企業概覽與財務績效",
+        "TP 1: 外部戰略環境分析",
+        "TP 2: 內部資源與能力評估",
+        "TP 3: 成長策略與未來挑戰"
+      ],
+      en: [
+        "TP 0: Overview & Finances",
+        "TP 1: External Analysis",
+        "TP 2: Internal Analysis",
+        "TP 3: Growth & Challenges"
+      ]
+    };
+    tooltips.forEach((tooltip, idx) => {
+      tooltip.textContent = tooltipTexts[currentLang][idx];
+    });
+  }
+
+  // If the workspace overlay is active, re-render the active TP content dynamically
+  const overlay = document.getElementById('tp-workspace-overlay');
+  if (overlay && overlay.classList.contains('active')) {
+    if (typeof state.activeTPIndex === 'undefined') state.activeTPIndex = 0;
+    
+    // Highlight the correct item in the sidebar
+    navItems.forEach(item => {
+      item.classList.remove('active');
+      const idx = parseInt(item.getAttribute('data-tp'));
+      if (idx === state.activeTPIndex) {
+        item.classList.add('active');
+        let color = '#E51A24';
+        if (idx === 1) color = '#FF7F50';
+        if (idx === 2) color = '#E0A23B';
+        if (idx === 3) color = '#6DB036';
+        item.style.color = color;
+      } else {
+        item.style.color = 'inherit';
+      }
+    });
+    
+    renderTPContent(state.activeTPIndex);
+  }
+}
+
+function openTPPage(tpIndex) {
+  const overlay = document.getElementById('tp-workspace-overlay');
+  if (!overlay) return;
+
+  // Track active index globally
+  state.activeTPIndex = tpIndex;
+
+  // Set active state
+  overlay.classList.add('active');
+  
+  // Highlight active sidebar navigation
+  const navItems = document.querySelectorAll('.tp-nav-item');
+  navItems.forEach(item => {
+    item.classList.remove('active');
+    const index = parseInt(item.getAttribute('data-tp'));
+    if (index === tpIndex) {
+      item.classList.add('active');
+      let color = '#E51A24';
+      if (index === 1) color = '#FF7F50';
+      if (index === 2) color = '#E0A23B';
+      if (index === 3) color = '#6DB036';
+      item.style.color = color;
+    } else {
+      item.style.color = 'inherit';
+    }
+  });
+
+  // Play entry sound effect
+  if (typeof sfx !== 'undefined' && sfx.win) sfx.win();
+
+  // Render the corresponding TP Content
+  renderTPContent(tpIndex);
+}
+
+function renderTPContent(tpIndex) {
+  const contentWrapper = document.getElementById('tp-content-wrapper');
+  if (!contentWrapper) return;
+
+  contentWrapper.innerHTML = "";
+
+  const currentLang = state.language === 'zh' ? 'zh' : 'en';
+
+  const tpDataBilingual = {
+    zh: {
+      tp0: {
+        badge: "TP 0: 企業概覽與財務績效評估",
+        title: "TP 0: Signed-up, Company Overview & Financial Performance",
+        desc: "本章節提供亞洲藏壽司（台灣）的企業歷史、願景、使命、核心價值、組織架構以及 2021 至 2025 年的財務績效數據圖表。",
+        html: `
+          <div class="tp-grid-2 animated-fade">
+            
+            <!-- (1) Two Recent News -->
+            <div class="tp-sub-card">
+              <h3 class="tp-sub-card-title"><i data-lucide="newspaper"></i> (1) 兩則最新新聞 (Two Recent News)</h3>
+              <div style="display: flex; flex-direction: column; gap: 14px;">
+                <div style="border-left: 3px solid var(--brand-red); padding-left: 10px;">
+                  <span class="tp-nav-tag" style="color: var(--brand-red);">2026年5月</span>
+                  <h4 style="font-size: 0.95rem; font-weight: 700; margin-top: 2px;">藏壽司台灣宣布在南部開設全新最大「土藏造」街邊旗艦店</h4>
+                  <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 4px;">全新店鋪採用江戶白壁傳統美學與百盞日式燈籠外觀，開幕首日即刷新全台單日最高來客紀錄，成功擺脫百貨抽成並深化南部市場佈局。</p>
+                </div>
+                <div style="border-left: 3px solid var(--wasabi-green); padding-left: 10px;">
+                  <span class="tp-nav-tag" style="color: var(--wasabi-green);">2026年3月</span>
+                  <h4 style="font-size: 0.95rem; font-weight: 700; margin-top: 2px;">人氣動漫《吉伊卡哇》聯名限定扭蛋活動大獲成功</h4>
+                  <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 4px;">聯名活動強勢帶動單店平均客單價大幅提升 15%，新會員 App 註冊率亦增長 22%，展現出驚人的『遊戲化行銷』綜效。</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- (2) Company History -->
+            <div class="tp-sub-card">
+              <h3 class="tp-sub-card-title"><i data-lucide="calendar"></i> (2) 公司歷史與沿革 (Company History)</h3>
+              <div class="vertical-timeline">
+                <div class="timeline-node">
+                  <div class="timeline-dot"></div>
+                  <span class="timeline-year">1977年</span>
+                  <p class="timeline-txt">創始人田中邦彥在日本大阪設立首家店鋪，確立「美味、安全、娛樂」之品牌基石。</p>
+                </div>
+                <div class="timeline-node">
+                  <div class="timeline-dot"></div>
+                  <span class="timeline-year">2014年</span>
+                  <p class="timeline-txt">進軍海外市場：在台北開出全台首店「松江南京店」，引進專利「鮮度君」與平板點餐系統。</p>
+                </div>
+                <div class="timeline-node">
+                  <div class="timeline-dot"></div>
+                  <span class="timeline-year">2020年</span>
+                  <p class="timeline-txt">亞洲藏壽司（2754）於台灣櫃買中心正式掛牌上櫃，成為外資連鎖餐飲在台發展的重要里程碑。</p>
+                </div>
+                <div class="timeline-node">
+                  <div class="timeline-dot"></div>
+                  <span class="timeline-year">2023年</span>
+                  <p class="timeline-txt">全球最大「高雄時代大道旗艦店」盛大開幕，由設計巨擘佐藤可士和親自操刀，導入江戶祭典美學。</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- (3) Vision, Mission, and Values -->
+            <div class="tp-sub-card">
+              <h3 class="tp-sub-card-title"><i data-lucide="shield-check"></i> (3) 願景、使命與核心價值 (Vision, Mission, Values)</h3>
+              <p style="font-size: 0.85rem; margin-bottom: 12px; font-weight: 600; color: var(--brand-red);">「美味（Tasty）、安全（Safe）、娛樂（Fun）」</p>
+              <div style="display: flex; flex-direction: column; gap: 8px; font-size: 0.85rem;">
+                <p><strong>企業願景：</strong> 將日本傳統江戶美食與現代智慧工業工程（IE）完美融合，推廣永續的智慧餐飲模式至全球市場。</p>
+                <p><strong>企業使命：</strong> 提供絕無人工添加物的高品質安心食材，在最安全的防護下（鮮度君），為消費者創造富含樂趣的餐桌就餐體驗。</p>
+                <p><strong>核心價值：</strong> 食安第一、科技賦能、顧客娛樂遊戲化與永續經營（ESG）。</p>
+              </div>
+            </div>
+
+            <!-- (4) Organizational Structure & Management -->
+            <div class="tp-sub-card">
+              <h3 class="tp-sub-card-title"><i data-lucide="git-branch"></i> (4) 組織架構與管理團隊 (Organizational Structure)</h3>
+              <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 10px;">💡 點擊下方架構以展開/收起子部門：</p>
+              <div class="org-structure-tree">
+                <div class="org-node">
+                  <div class="org-node-header" style="cursor: pointer;" onclick="toggleOrgNode('ceo-node')">
+                    <i data-lucide="users" style="width: 14px; color: var(--brand-red);"></i> 董事會與執行長 (CEO & Management Team)
+                  </div>
+                  <div class="org-node-children" id="ceo-node">
+                    <div class="org-node">
+                      <div class="org-node-header" style="cursor: pointer;" onclick="toggleOrgNode('ops-node')">業務營運部門 (Business Units)</div>
+                      <div class="org-node-children" id="ops-node">
+                        <div class="org-leaf">北部營運大區 (台北、新北、桃園)</div>
+                        <div class="org-leaf">中南部營運大區 (台中、彰化、高雄)</div>
+                      </div>
+                    </div>
+                    <div class="org-node">
+                      <div class="org-node-header" style="cursor: pointer;" onclick="toggleOrgNode('func-node')">功能支援中心 (Functional Support)</div>
+                      <div class="org-node-children" id="func-node">
+                        <div class="org-leaf">數位行銷與熱門 IP 授權部 (IP Licensing & Marketing)</div>
+                        <div class="org-leaf">智慧餐飲 Mekatronika 自動化設備研發部</div>
+                        <div class="org-leaf">全球物料採購與冷鏈倉儲管理部</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- (5) Product Portfolios & Roadmap -->
+            <div class="tp-sub-card">
+              <h3 class="tp-sub-card-title"><i data-lucide="trending-up"></i> (5) 產品組合與 peta 發展地圖 (Portfolios & Roadmap)</h3>
+              <div class="roadmap-slider-wrapper">
+                <div class="roadmap-slider-nav">
+                  <span id="roadmap-phase-indicator" class="roadmap-phase">第 1 階段 / 共 3 階段</span>
+                  <div style="display: flex; gap: 8px;">
+                    <button class="roadmap-btn" onclick="slideRoadmap(-1)"><i data-lucide="chevron-left" style="width: 14px;"></i></button>
+                    <button class="roadmap-btn" onclick="slideRoadmap(1)"><i data-lucide="chevron-right" style="width: 14px;"></i></button>
+                  </div>
+                </div>
+                <div class="roadmap-cards-viewport">
+                  <div class="roadmap-cards-track" id="roadmap-cards-track">
+                    <div class="roadmap-slide-card">
+                      <span class="roadmap-phase">2021 ~ 2023 - 智慧基礎建設</span>
+                      <h4 class="roadmap-title">全面導入 E-table 平板與智慧軌道</h4>
+                      <ul class="roadmap-bullets">
+                        <li><i data-lucide="check"></i> 100% 普及桌邊自助平板點餐與手機 QR 行動預約系統。</li>
+                        <li><i data-lucide="check"></i> Conveyor 軌道上方全數安裝 AI 監控鏡頭防堵食安威脅。</li>
+                      </ul>
+                    </div>
+                    <div class="roadmap-slide-card">
+                      <span class="roadmap-phase">2024 ~ 2025 - 體驗行銷大擴張</span>
+                      <h4 class="roadmap-title">極致 IP 聯名與土藏旗艦店拓點</h4>
+                      <ul class="roadmap-bullets">
+                        <li><i data-lucide="check"></i> 簽署吉伊卡哇、蠟筆小新等超人氣 IP 限定玩具合作案。</li>
+                        <li><i data-lucide="check"></i> 大舉展店獨立白壁土藏造街邊店，解鎖市郊開車族商機。</li>
+                      </ul>
+                    </div>
+                    <div class="roadmap-slide-card">
+                      <span class="roadmap-phase">2026 ~ 2027 - ESG 與綠色永續</span>
+                      <h4 class="roadmap-title">研發植物性海鮮與數位碳足跡</h4>
+                      <ul class="roadmap-bullets">
+                        <li><i data-lucide="check"></i> 首創推出低碳植物海鮮壽司，契合年輕消費群體環保風潮。</li>
+                        <li><i data-lucide="check"></i> 導入桌邊平板數位計算碳排放，將 ESG 融入消費場景。</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- (6) Financial Performance during 2021~2025 -->
+            <div class="tp-sub-card">
+              <h3 class="tp-sub-card-title"><i data-lucide="bar-chart-3"></i> (6) 2021~2025年財務表現 (Financial Performance)</h3>
+              <div class="financial-chart-container">
+                <div class="chart-controls">
+                  <button class="chart-btn active" id="chart-btn-revenue" onclick="toggleFinancialChart('revenue')">營業收入 (Revenue)</button>
+                  <button class="chart-btn" id="chart-btn-profit" onclick="toggleFinancialChart('profit')">稅後淨利 (Net Profit)</button>
+                </div>
+                <div class="chart-svg-wrapper" id="chart-svg-wrapper">
+                  <!-- SVG Chart injected dynamically -->
+                </div>
+                <p style="font-size: 0.75rem; color: var(--text-secondary); text-align: center;">*單位：營業收入為新台幣十億元 (NT$ Billion)；稅後淨利為新台幣百萬元 (NT$ Million)</p>
+              </div>
+            </div>
+
+          </div>
+        `
+      },
+      tp1: {
+        badge: "TP 1: 外部與產業戰略環境分析",
+        title: "TP 1: External Analysis",
+        desc: "本章節探討台灣藏壽司所處之總體外部環境（PESTEL）、產業價值鏈鏈條分佈、競爭對手對立態勢與行動反饋，以及波特五力框架和產業生命週期解讀。",
+        html: `
+          <div class="tp-grid-2 animated-fade">
+            
+            <!-- (1) Macro Analysis – PESTEL -->
+            <div class="tp-sub-card">
+              <h3 class="tp-sub-card-title"><i data-lucide="globe"></i> (1) 總體環境評估 - PESTEL 核心要素</h3>
+              <div style="display: flex; flex-direction: column; gap: 12px; font-size: 0.85rem;">
+                <p><strong>社會人口（極關鍵）：</strong> 台灣面臨極度嚴重之少子化、高齡化以及小家庭與單身化生活型態。傳統大盤餐桌式微，個人化、快速就餐且價格彈性的迴轉壽司完美切入該痛點。</p>
+                <p><strong>技術環境（極關鍵）：</strong> 餐飲服務業遭遇空前的「大缺工潮」與高基本工資通膨。促使藏壽司加速智慧化（自助平板、水流自動回收、自助結帳亭）以用科技抵禦人力成本危機。</p>
+                <p><strong>環境合規與法規（關鍵）：</strong> 台灣政府積極限制一次性塑膠及合規綠色餐廳政策，迫使品牌開發耐用、可持續的循環器皿，提升 ESG 合規性。</p>
+              </div>
+            </div>
+
+            <!-- (2) Industry Value Chain -->
+            <div class="tp-sub-card">
+              <h3 class="tp-sub-card-title"><i data-lucide="arrow-right-left"></i> (2) 迴轉壽司產業價值鏈 (Up/Middle/Downstream)</h3>
+              <div style="display: flex; flex-direction: column; gap: 10px; font-size: 0.85rem;">
+                <div style="background: rgba(229, 26, 36, 0.04); padding: 10px; border-radius: var(--radius-sm); border-left: 3.5px solid var(--brand-red);">
+                  <strong>上游 (Upstream) - 海產契作採購：</strong> 母公司與全球各大主要漁場簽訂長期期貨合約（例如挪威鮭魚、日本黑鮪魚），鎖定採購價以抵禦國際供應鏈通膨。
+                </div>
+                <div style="background: rgba(224, 162, 59, 0.04); padding: 10px; border-radius: var(--radius-sm); border-left: 3.5px solid var(--lantern-gold);">
+                  <strong>中游 (Midstream) - 智慧冷鏈物流：</strong> 於台北與高雄雙邊運作超低溫冷鏈轉運倉，引進超低溫急凍技術（Flash Freezing）保障生鮮刺身在海運運送中的細胞活性與鮮度。
+                </div>
+                <div style="background: rgba(109, 176, 54, 0.04); padding: 10px; border-radius: var(--radius-sm); border-left: 3.5px solid var(--wasabi-green);">
+                  <strong>下游 (Downstream) - 高科技店面體驗：</strong> 店內佈局雙層傳送軌道、AI 行車安全相機鏡頭判讀，以及桌底一體化水流盤子回收清洗槽，極致壓縮現場服務人力需求。
+                </div>
+              </div>
+            </div>
+
+            <!-- (3) Competitor Analysis & Competitive Dynamics -->
+            <div class="tp-sub-card">
+              <h3 class="tp-sub-card-title"><i data-lucide="swords"></i> (3) 競爭對手分析與競爭動態 (Competitor Matrix)</h3>
+              <table class="competitor-matrix">
+                <thead>
+                  <tr>
+                    <th>對手品牌</th>
+                    <th>資源相似度</th>
+                    <th>市場重疊度</th>
+                    <th>核心策略壁壘</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>日本壽司郎 (Sushiro)</strong></td>
+                    <td><span class="competitor-badge high">極高</span></td>
+                    <td><span class="competitor-badge high">極高</span></td>
+                    <td>以「食材高級感（高級紅肉魚）」與高頻新品搶占高品質客群。</td>
+                  </tr>
+                  <tr>
+                    <td><strong>爭鮮迴轉壽司 (Sushi Express)</strong></td>
+                    <td><span class="competitor-badge med">中等偏高</span></td>
+                    <td><span class="competitor-badge high">極高</span></td>
+                    <td>主打高密度交通樞紐地段，每盤30元台幣的低成本防線。</td>
+                  </tr>
+                </tbody>
+              </table>
+              <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 10px;"><strong>動態對立（Aksi-Reaksi）：</strong> 藏壽司推出吉伊卡哇扭蛋活動時，壽司郎會立即跟進以高級海膽鮪魚祭搶攻，爭鮮則以高 CP 值便當搶占平日午餐外賣客戶。</p>
+            </div>
+
+            <!-- (4) Five Forces Framework -->
+            <div class="tp-sub-card">
+              <h3 class="tp-sub-card-title"><i data-lucide="radar"></i> (4) 波特五力分析 (Five Forces Model)</h3>
+              <div style="display: flex; flex-direction: column; gap: 8px; font-size: 0.85rem;">
+                <p><strong>1. 同業競爭烈度（極高 - 4.8/5）：</strong> 爭鮮、壽司郎、藏壽司三強鼎立，於都會 mal 進行慘烈的近身選址戰。</p>
+                <p><strong>2. 買方議價力量（高 - 3.5/5）：</strong> 消費者轉置成本極低，極易隨行銷活動（扭蛋）與折扣而流失。</p>
+                <p><strong>3. 賣方議價力量（中偏低 - 2.5/5）：</strong> 藏壽司具備全球大規模採購優勢，對單一供應商依賴度低。</p>
+                <p><strong>4. 替代品威脅（極高 - 4.5/5）：</strong> 精緻台式火鍋、燒肉店、高檔拉麵屋以及外送餐飲，在寒冷季節吸客效應顯著。</p>
+                <p><strong>5. 新進入者威脅（低 - 2.0/5）：</strong> 連鎖 mekatronika 自動化前期開辦資本 CapEx 門檻極高，一般單店難以複製。</p>
+              </div>
+            </div>
+
+            <!-- (5) Industry Lifecycle & Recent News -->
+            <div class="tp-sub-card" style="grid-column: span 2;">
+              <h3 class="tp-sub-card-title"><i data-lucide="info"></i> (5) 產業生命週期階段與最新財報新聞 (Lifecycle & Numbers)</h3>
+              <div style="display: flex; gap: 20px; font-size: 0.85rem; align-items: center;">
+                <div style="flex: 1;">
+                  <p><strong>生命週期：成熟期 (Maturity Phase)</strong></p>
+                  <p style="color: var(--text-secondary); margin-top: 4px;">台灣迴轉壽司產業已進入高度飽和的成熟期。年均市場增長率放緩至 4-5%。競爭已從大舉擴張分店轉向追求店內智慧化管理、智慧廚房廢棄率精算（降低至1.5%）以及強化數位 App 留存率。</p>
+                </div>
+                <div style="flex: 1; border-left: 2px solid var(--border-color); padding-left: 20px;">
+                  <p><strong>最新新聞與財務數據：</strong></p>
+                  <p style="color: var(--text-secondary); margin-top: 4px;">截止至2025年第四季度，台灣迴轉壽司三巨頭之平均毛利率維持在64%的高檔區間，然而淨利率普遍受制於人力成本上漲而承壓。藏壽司透過智慧收銀台全面導入與自動洗碗專利，成功將全店經營淨利潤率維持在8.4%，傲視連鎖餐飲同業。</p>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        `
+      },
+      tp2: {
+        badge: "TP 2: 企業內部資源能力與競爭優勢評估",
+        title: "TP 2: Internal Analysis",
+        desc: "評估藏壽司內部核心業務構成、價值鏈獨特 mekatronika 支持流程、VRIO 架構判定、核心能力來源以及面對危機時的動態能力適應度。",
+        html: `
+          <div class="tp-grid-2 animated-fade">
+            
+            <!-- (1) Core Businesses / Product lines -->
+            <div class="tp-sub-card">
+              <h3 class="tp-sub-card-title"><i data-lucide="pie-chart"></i> (1) 核心業務營收組成與市場份額</h3>
+              <p style="font-size: 0.85rem; margin-bottom: 12px;">亞洲藏壽司（台灣）各產品線營收比重：</p>
+              <div style="display: flex; flex-direction: column; gap: 10px; font-size: 0.85rem;">
+                <div>
+                  <div style="display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: 700; margin-bottom: 2px;">
+                    <span>經典傳送帶壽司 (Conveyor Sushi)</span>
+                    <span>82%</span>
+                  </div>
+                  <div style="height: 8px; background: rgba(0,0,0,0.05); border-radius: var(--radius-full); overflow: hidden;">
+                    <div style="width: 82%; height: 100%; background: var(--brand-red);"></div>
+                  </div>
+                </div>
+                <div>
+                  <div style="display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: 700; margin-bottom: 2px;">
+                    <span>熟食與副餐拉麵 (Hot Foods / Ramen)</span>
+                    <span>12%</span>
+                  </div>
+                  <div style="height: 8px; background: rgba(0,0,0,0.05); border-radius: var(--radius-full); overflow: hidden;">
+                    <div style="width: 12%; height: 100%; background: var(--lantern-gold);"></div>
+                  </div>
+                </div>
+                <div>
+                  <div style="display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: 700; margin-bottom: 2px;">
+                    <span>日式特色甜點與飲料</span>
+                    <span>6%</span>
+                  </div>
+                  <div style="height: 8px; background: rgba(0,0,0,0.05); border-radius: var(--radius-full); overflow: hidden;">
+                    <div style="width: 6%; height: 100%; background: var(--wasabi-green);"></div>
+                  </div>
+                </div>
+              </div>
+              <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 10px;"><strong>市場份額：</strong> 於全台精緻日式迴轉連壽司市場佔有率約為 38%，與日本壽司郎共同名列全台第一梯隊領頭羊。</p>
+            </div>
+
+            <!-- (2) Corporate Value Chain – Key Activities -->
+            <div class="tp-sub-card">
+              <h3 class="tp-sub-card-title"><i data-lucide="layers"></i> (2) 企業特色價值鏈 (Value Chain Matrix)</h3>
+              <div style="display: flex; flex-direction: column; gap: 10px; font-size: 0.85rem;">
+                <div style="border-bottom: 1px solid var(--border-color); padding-bottom: 6px;">
+                  <span class="tp-nav-tag" style="color: var(--brand-red);">主要活動 (PRIMARY)</span>
+                  <p style="margin-top: 2px; color: var(--text-secondary); font-size: 0.8rem;">引進全自動廚房捏飯壽司機（Operations）、利用雙層急行新幹線精準配送（Outbound）、Bikkura Pon 扭蛋與 IP 限時行銷組合（Marketing）。</p>
+                </div>
+                <div>
+                  <span class="tp-nav-tag" style="color: var(--wasabi-green);">輔助活動 (SUPPORTING)</span>
+                  <p style="margin-top: 2px; color: var(--text-secondary); font-size: 0.8rem;">由日方工程師與在地團隊進行 mekatronika 自動清洗與 AI 監控之專利研發維護，結合 App 大數據判讀，構築科技護城河。</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- (3) Key Resources – Tangible & Intangible -->
+            <div class="tp-sub-card">
+              <h3 class="tp-sub-card-title"><i data-lucide="gem"></i> (3) 核心資源 VRIO 評估要素</h3>
+              <div style="display: flex; gap: 16px; font-size: 0.85rem;">
+                <div style="flex: 1; background: rgba(0,0,0,0.02); padding: 12px; border-radius: var(--radius-md);">
+                  <p><strong>有形資源 (Tangible Assets)：</strong></p>
+                  <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 4px;">遍佈全台 56 間直營特選地段門市固定資產、全台高規冷凍物流車隊、母公司持股高抗險財務架構與充足之營運現金流。</p>
+                </div>
+                <div style="flex: 1; background: rgba(0,0,0,0.02); padding: 12px; border-radius: var(--radius-md);">
+                  <p><strong>無形資源 (Intangible Assets)：</strong></p>
+                  <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 4px;">鮮度君防護蓋專利技術權利、桌邊水道水力漂送清洗系統全球專利、以及與吉伊卡哇、蠟筆小新等頂流動漫 IP 獨家合約權利。</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- (4) Core Competencies & Partners -->
+            <div class="tp-sub-card">
+              <h3 class="tp-sub-card-title"><i data-lucide="handshake"></i> (4) 核心能力與外部關鍵戰略夥伴 (Partners)</h3>
+              <div style="display: flex; flex-direction: column; gap: 8px; font-size: 0.85rem;">
+                <p><strong>核心能力：</strong> 智慧自動化（工業工程思維）與就餐趣味化（遊戲化行銷）之高效協同作用。不僅節約後台洗碗與外場清桌35%人力成本，更能強勢誘發消費者產生「湊滿5盤」之超額消費衝動。</p>
+                <p><strong>戰術夥伴：</strong> 印信物流冷鏈運輸集團、日本集英社及東映動漫授權方、台灣在地米糧優等農業契作產區。</p>
+              </div>
+            </div>
+
+            <!-- (5) Dynamic Capabilities -->
+            <div class="tp-sub-card" style="grid-column: span 2;">
+              <h3 class="tp-sub-card-title"><i data-lucide="refresh-cw"></i> (5) 動態能力判定與最新事件反饋 (Dynamic Capabilities & News)</h3>
+              <p style="font-size: 0.85rem; margin-bottom: 12px; color: var(--text-secondary);">動態能力意指企業快速調整、重組、更新內部資源以應對外部劇烈未知動蕩之自適應本領。藏壽司擁有極強之動態自癒能力：</p>
+              <div style="display: flex; gap: 20px; font-size: 0.85rem;">
+                <div style="flex: 1; border-left: 3px solid var(--brand-red); padding-left: 14px;">
+                  <strong>疫情期間之敏捷轉型：</strong>
+                  <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 4px;">2021年台灣爆發本土三級疫情限制內用，藏壽司於三週內動員工程團隊改版 App，首創推出「買外帶送扭蛋」之策略。設計包含實體扭蛋玩具的特製精美外帶便當，迅速穩固現金流，展示出高超之動態重組能力。</p>
+                </div>
+                <div style="flex: 1; border-left: 3px solid var(--wasabi-green); padding-left: 14px;">
+                  <strong>缺工潮之設備升級：</strong>
+                  <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 4px;">面對2024~2025年少子化極致缺工，迅速與日方技術部合作引進高精度平板及完全無人化電子結帳亭（Self-service Checkout Kiosks），全台門市落地率達到100%，最大化抵消前台櫃員荒衝擊。</p>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        `
+      },
+      tp3: {
+        badge: "TP 3: 企業成長拓張策略與未來戰略隱憂",
+        title: "TP 3: Growth and Challenges",
+        desc: "解析藏壽司之垂直整合（向後整合）、水平及產品多角化開發、國內外街邊店展店模式，以及針對未來海產通膨、扭蛋疲勞等隱憂之應對建議。",
+        html: `
+          <div class="tp-grid-2 animated-fade">
+            
+            <!-- (1) Vertical Integration -->
+            <div class="tp-sub-card">
+              <h3 class="tp-sub-card-title"><i data-lucide="git-merge"></i> (1) 向後垂直整合 (Vertical Integration)</h3>
+              <p style="font-size: 0.85rem; color: var(--text-secondary);">藏壽司在產業價值鏈中實施部分向後整合控制：</p>
+              <div style="display: flex; flex-direction: column; gap: 8px; font-size: 0.85rem; margin-top: 10px;">
+                <p><i data-lucide="check" style="width: 14px; color: var(--wasabi-green); display: inline; margin-right: 6px;"></i> 繞過層層在地中間中介批發商，與挪威及日本之深海漁業集團直接達成獨家買斷交易，於台灣合資設立切片包裝加工廠。</p>
+                <p><i data-lucide="check" style="width: 14px; color: var(--wasabi-green); display: inline; margin-right: 6px;"></i> 此舉大幅提升食材可控性與防塵食安保障，將進口核心魚種採購成本利潤空間提高 4% 左右。</p>
+              </div>
+            </div>
+
+            <!-- (2) Horizontal / Product Diversification -->
+            <div class="tp-sub-card">
+              <h3 class="tp-sub-card-title"><i data-lucide="expand"></i> (2) 水平與產品多角化 (Product Diversification)</h3>
+              <div style="display: flex; flex-direction: column; gap: 8px; font-size: 0.85rem;">
+                <p><strong>熟食橫向橫向拓寬 (Hot Foods)：</strong> 推出香濃鯛魚拉麵、酥炸天婦羅炸蝦、熱茶碗蒸等，解決冬天迴轉壽司冷食吸客率下降威脅，並成功抓取不吃生食的小孩與銀髮族群。</p>
+                <p><strong>精品甜點多角化開發：</strong> 推出炙烤黑糖蕨餅、鯛魚燒冰淇淋聖代等。甜點以極高精緻度引爆 IG 網紅打卡，成為非主餐時段（下午茶）營收的強力引擎。</p>
+              </div>
+            </div>
+
+            <!-- (3) Geographical Expansion -->
+            <div class="tp-sub-card">
+              <h3 class="tp-sub-card-title"><i data-lucide="navigation"></i> (3) 地理擴張與展店路徑 (Geographical Expansion)</h3>
+              <div style="display: flex; flex-direction: column; gap: 10px; font-size: 0.85rem;">
+                <div style="background: rgba(0,0,0,0.02); padding: 10px; border-radius: var(--radius-sm);">
+                  <strong>國內：土藏造（街邊店）擴張模式 (Greenfield)</strong>
+                  <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 4px;">於中南部及非一線都會外圍商圈大舉自建日式傳統白壁「土藏」建築。獨立街邊店具備超大停車場，成功吸引開車家庭客，且可擺脫百貨公司高達 10%-13% 的高額租金抽成，改為長期低成本地租，提升營業利潤率。</p>
+                </div>
+                <div style="background: rgba(0,0,0,0.02); padding: 10px; border-radius: var(--radius-sm);">
+                  <strong>海外：東南亞拓點（JV 與戰略聯盟）</strong>
+                  <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 4px;">利用台灣子公司的成功經驗作為東南亞輻射跳板，與新加坡、馬來西亞等地之大型零售控股集團成立合資 JV，以輕資產、高連鎖系統標準化模式推進東南亞高端餐飲市場。</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- (4) Future Challenges and Suggestions -->
+            <div class="tp-sub-card suggestion-card red">
+              <h3 class="tp-sub-card-title"><i data-lucide="alert-triangle"></i> 未來核心戰略隱憂 (Key Strategic Risks)</h3>
+              <div style="display: flex; flex-direction: column; gap: 8px; font-size: 0.85rem;">
+                <p><strong>⚠️ Bikkura Pon 扭蛋模式行銷疲勞：</strong> 消費者極易隨時間產生審美疲勞。若 IP 授權強度不夠，容易導致客單價向競爭對手（壽司郎）流失。</p>
+                <p><strong>⚠️ 全球溫室效應造成的生鮮通膨：</strong> 全球海水變暖衝擊挪威鮭魚及遠洋鮪魚漁獲。進口原材料價格持續高漲，壓縮單盤平價利潤空間。</p>
+              </div>
+            </div>
+
+            <div class="tp-sub-card suggestion-card" style="grid-column: span 2;">
+              <h3 class="tp-sub-card-title" style="color: var(--wasabi-green); border-bottom-color: rgba(109, 176, 54, 0.2);"><i data-lucide="lightbulb" style="color: var(--wasabi-green);"></i> 本小組前瞻性策略建議 (Suggestions for Kura)</h3>
+              <div style="display: flex; gap: 20px; font-size: 0.85rem;">
+                <div style="flex: 1;">
+                  <strong>1. 升級數位 keystone 會員生態圈（Kura App 3.0）：</strong>
+                  <p style="color: var(--text-secondary); font-size: 0.8rem; margin-top: 4px;">擺脫對實體玩具的單一依賴，在 App 中加入「虛擬扭蛋交易區」與「數位卡牌養成小遊戲」，使用戶平日積累的就餐點數可兌換虛擬限量版 IP，以極低邊際成本維持長線的顧客黏著度。</p>
+                </div>
+                <div style="flex: 1; border-left: 1px solid var(--border-color); padding-left: 20px;">
+                  <strong>2. 推動低碳植物性海鮮與永續捕撈（ESG branding）：</strong>
+                  <p style="color: var(--text-secondary); font-size: 0.8rem; margin-top: 4px;">搶先在全台連鎖軌道引進植物性海鮮（例如蒟蒻製仿鮭魚生魚片），藉此避開國際生鮮關稅通膨風險，同時向台灣年輕世代展現綠色責任，拉開與競爭者的形象差距。</p>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        `
+      }
+    },
+    en: {
+      tp0: {
+        badge: "TP 0: CORPORATE OVERVIEW & FINANCIALS",
+        title: "TP 0: Signed-up, Company Overview & Financial Performance",
+        desc: "This section presents Kura Sushi Taiwan's corporate history, vision, mission, core values, organizational structure, product portfolios, and interactive financial performance charts from 2021 to 2025.",
+        html: `
+          <div class="tp-grid-2 animated-fade">
+            
+            <!-- (1) Two Recent News -->
+            <div class="tp-sub-card">
+              <h3 class="tp-sub-card-title"><i data-lucide="newspaper"></i> (1) Two Recent News</h3>
+              <div style="display: flex; flex-direction: column; gap: 14px;">
+                <div style="border-left: 3px solid var(--brand-red); padding-left: 10px;">
+                  <span class="tp-nav-tag" style="color: var(--brand-red);">MAY 2026</span>
+                  <h4 style="font-size: 0.95rem; font-weight: 700; margin-top: 2px;">Kura Sushi Taiwan Launches Its Largest Standalone "Tuzang-style" Flagship</h4>
+                  <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 4px;">The new white-walled freestanding warehouse store with traditional lanterns in Kaohsiung broke the historical single-day consumer count record, expanding its footprint in the southern region.</p>
+                </div>
+                <div style="border-left: 3px solid var(--wasabi-green); padding-left: 10px;">
+                  <span class="tp-nav-tag" style="color: var(--wasabi-green);">MARCH 2026</span>
+                  <h4 style="font-size: 0.95rem; font-weight: 700; margin-top: 2px;">"Chiikawa" Co-branded Toy Event Boosts Quarterly Profit Heights</h4>
+                  <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 4px;">The limited edition capsule toys drove a whopping 15% increase in average dine-in checks and raised mobile App registrations by 22% in the first quarter.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- (2) Company History -->
+            <div class="tp-sub-card">
+              <h3 class="tp-sub-card-title"><i data-lucide="calendar"></i> (2) Corporate History & Milestones</h3>
+              <div class="vertical-timeline">
+                <div class="timeline-node">
+                  <div class="timeline-dot"></div>
+                  <span class="timeline-year">1977</span>
+                  <p class="timeline-txt">Founded by Kunihiko Tanaka in Osaka, Japan, establishing the core brand pillars of "Tasty, Safe, and Cheap".</p>
+                </div>
+                <div class="timeline-node">
+                  <div class="timeline-dot"></div>
+                  <span class="timeline-year">2014</span>
+                  <p class="timeline-txt">Expanded to Taiwan: Opened its first branch at Songjiang Nanjing in Taipei, introducing patented "Mr. Fresh" domes.</p>
+                </div>
+                <div class="timeline-node">
+                  <div class="timeline-dot"></div>
+                  <span class="timeline-year">2020</span>
+                  <p class="timeline-txt">Officially listed on the Taipei Exchange (TPEx: 2754), consolidating its status as a benchmark multinational diner in Taiwan.</p>
+                </div>
+                <div class="timeline-node">
+                  <div class="timeline-dot"></div>
+                  <span class="timeline-year">2023</span>
+                  <p class="timeline-txt">Inaugurated the world's largest Kaohsiung Era Avenue flagship designed by creative guru Kashiwa Sato.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- (3) Vision, Mission, and Values -->
+            <div class="tp-sub-card">
+              <h3 class="tp-sub-card-title"><i data-lucide="shield-check"></i> (3) Vision, Mission, and Values</h3>
+              <p style="font-size: 0.85rem; margin-bottom: 12px; font-weight: 600; color: var(--brand-red);">"Tasty, Safe, and Fun" — The Three Pillars</p>
+              <div style="display: flex; flex-direction: column; gap: 8px; font-size: 0.85rem;">
+                <p><strong>Vision:</strong> Fuse Edo-period culinary heritage with state-of-the-art mekatronics to deliver affordable culinary happiness to global diners.</p>
+                <p><strong>Mission:</strong> Serve premium raw seafood free of chemical syntheses, protected by patented domes, and offering a gamified dining environment.</p>
+                <p><strong>Values:</strong> Absolute Food Safety, Continuous Process Automation, Gamified Dining, and ESG-led Responsibility.</p>
+              </div>
+            </div>
+
+            <!-- (4) Organizational Structure & Management -->
+            <div class="tp-sub-card">
+              <h3 class="tp-sub-card-title"><i data-lucide="git-branch"></i> (4) Org Structure & Management (Business Units)</h3>
+              <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 10px;">💡 Click on divisions below to expand or collapse sub-units:</p>
+              <div class="org-structure-tree">
+                <div class="org-node">
+                  <div class="org-node-header" style="cursor: pointer;" onclick="toggleOrgNode('ceo-node-en')">
+                    <i data-lucide="users" style="width: 14px; color: var(--brand-red);"></i> Board of Directors & CEO
+                  </div>
+                  <div class="org-node-children" id="ceo-node-en">
+                    <div class="org-node">
+                      <div class="org-node-header" style="cursor: pointer;" onclick="toggleOrgNode('ops-node-en')">Business Operations Division</div>
+                      <div class="org-node-children" id="ops-node-en">
+                        <div class="org-leaf">Northern Area Operations (Taipei, Taoyuan, Hsinchu)</div>
+                        <div class="org-leaf">Southern Area Operations (Taichung, Chiayi, Kaohsiung)</div>
+                      </div>
+                    </div>
+                    <div class="org-node">
+                      <div class="org-node-header" style="cursor: pointer;" onclick="toggleOrgNode('func-node-en')">Functional Support Hubs</div>
+                      <div class="org-node-children" id="func-node-en">
+                        <div class="org-leaf">Digital Marketing & Character IP Licensing Division</div>
+                        <div class="org-leaf">Smart Kitchen Mekatronics & Automation Equipment R&D</div>
+                        <div class="org-leaf">Global Sourcing Cold-chain Warehouse Management</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- (5) Product Portfolios & Roadmap -->
+            <div class="tp-sub-card">
+              <h3 class="tp-sub-card-title"><i data-lucide="trending-up"></i> (5) Product Portfolios & Corporate Roadmap</h3>
+              <div class="roadmap-slider-wrapper">
+                <div class="roadmap-slider-nav">
+                  <span id="roadmap-phase-indicator" class="roadmap-phase">Phase 1 of 3</span>
+                  <div style="display: flex; gap: 8px;">
+                    <button class="roadmap-btn" onclick="slideRoadmap(-1)"><i data-lucide="chevron-left" style="width: 14px;"></i></button>
+                    <button class="roadmap-btn" onclick="slideRoadmap(1)"><i data-lucide="chevron-right" style="width: 14px;"></i></button>
+                  </div>
+                </div>
+                <div class="roadmap-cards-viewport">
+                  <div class="roadmap-cards-track" id="roadmap-cards-track">
+                    <div class="roadmap-slide-card">
+                      <span class="roadmap-phase">2021 ~ 2023 - DIGITAL STAGE</span>
+                      <h4 class="roadmap-title">Rollout of order tablets and AI cameras</h4>
+                      <ul class="roadmap-bullets">
+                        <li><i data-lucide="check"></i> 100% deployment of E-table tablets and mobile reservation systems.</li>
+                        <li><i data-lucide="check"></i> AI vision cameras installed on lanes to monitor dish freshness.</li>
+                      </ul>
+                    </div>
+                    <div class="roadmap-slide-card">
+                      <span class="roadmap-phase">2024 ~ 2025 - EXPERIENCE EXPANSION</span>
+                      <h4 class="roadmap-title">Co-branded IP Toys & Greenfield Tuzang Stores</h4>
+                      <ul class="roadmap-bullets">
+                        <li><i data-lucide="check"></i> Partnered with top-tier Japanese co-brands (Chiikawa, Detective Conan).</li>
+                        <li><i data-lucide="check"></i> Scaled suburban freestanding stores to target car-owning families.</li>
+                      </ul>
+                    </div>
+                    <div class="roadmap-slide-card">
+                      <span class="roadmap-phase">2026 ~ 2027 - ESG & SUSTAINABILITY</span>
+                      <h4 class="roadmap-title">Plant-based Seafood Sushi Rollout</h4>
+                      <ul class="roadmap-bullets">
+                        <li><i data-lucide="check"></i> Launch plant-based vegan seafood lines to capture eco-diner demographics.</li>
+                        <li><i data-lucide="check"></i> Deploy digital carbon footprint calculators on E-table tablets.</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- (6) Financial Performance during 2021~2025 -->
+            <div class="tp-sub-card">
+              <h3 class="tp-sub-card-title"><i data-lucide="bar-chart-3"></i> (6) Interactive Financial Performance 2021~2025</h3>
+              <div class="financial-chart-container">
+                <div class="chart-controls">
+                  <button class="chart-btn active" id="chart-btn-revenue" onclick="toggleFinancialChart('revenue')">Annual Revenue</button>
+                  <button class="chart-btn" id="chart-btn-profit" onclick="toggleFinancialChart('profit')">Net Profit</button>
+                </div>
+                <div class="chart-svg-wrapper" id="chart-svg-wrapper">
+                  <!-- SVG Chart injected dynamically -->
+                </div>
+                <p style="font-size: 0.75rem; color: var(--text-secondary); text-align: center;">*Values in NT$ Billion (Revenue) and NT$ Million (Net Profit)</p>
+              </div>
+            </div>
+
+          </div>
+        `
+      },
+      tp1: {
+        badge: "TP 1: EXTERNAL STRATEGIC ENVIRONMENT",
+        title: "TP 1: External Analysis",
+        desc: "Provides a thorough strategic analysis of the PESTEL macro-forces, the structure of the industrial value chain, competitor metrics, Porter's Five Forces, and the lifecycle stage of Taiwan's conveyor sushi sector.",
+        html: `
+          <div class="tp-grid-2 animated-fade">
+            
+            <!-- (1) Macro Analysis – PESTEL -->
+            <div class="tp-sub-card">
+              <h3 class="tp-sub-card-title"><i data-lucide="globe"></i> (1) Macro Environment - Key PESTEL Forces</h3>
+              <div style="display: flex; flex-direction: column; gap: 12px; font-size: 0.85rem;">
+                <p><strong>Social Demographic (Critical):</strong> Taiwan is facing low birthrates and a rapidly aging demographic. Nuclear families and single-person households are surging. Kura Sushi's portion-flexible and interactive table slots target this demographic shift directly.</p>
+                <p><strong>Technological (Critical):</strong> Extreme labor shortages in Taiwan's dining sector drive basic wage spikes. Automations (self-service checkouts, automatic plate water waterways) are essential to lower restaurant labor pressures.</p>
+                <p><strong>Environmental & Legal (Critical):</strong> Green ESG initiatives banning single-use plastics mandate durable, circular restaurant kitchenware and advanced water recycling washers.</p>
+              </div>
+            </div>
+
+            <!-- (2) Industry Value Chain -->
+            <div class="tp-sub-card">
+              <h3 class="tp-sub-card-title"><i data-lucide="arrow-right-left"></i> (2) Conveyor Sushi Value Chain (Up/Middle/Downstream)</h3>
+              <div style="display: flex; flex-direction: column; gap: 10px; font-size: 0.85rem;">
+                <div style="background: rgba(229, 26, 36, 0.04); padding: 10px; border-radius: var(--radius-sm); border-left: 3.5px solid var(--brand-red);">
+                  <strong>Upstream - Sourcing contracts:</strong> Centralized parent procurement locks in futures contracts with premium fisheries (Norwegian salmon, Japanese tuna) to hedge price inflation.
+                </div>
+                <div style="background: rgba(224, 162, 59, 0.04); padding: 10px; border-radius: var(--radius-sm); border-left: 3.5px solid var(--lantern-gold);">
+                  <strong>Midstream - Cold-Chain Logistics:</strong> Super-low temperature logistics centers in Taipei and Kaohsiung using advanced flash-freezing to preserve raw seafood cell activity.
+                </div>
+                <div style="background: rgba(109, 176, 54, 0.04); padding: 10px; border-radius: var(--radius-sm); border-left: 3.5px solid var(--wasabi-green);">
+                  <strong>Downstream - Smart Outlets:</strong> Lane-mounted AI cameras, express bullet tracks, and under-table plate waterway disposal grids to minimize waiter count.
+                </div>
+              </div>
+            </div>
+
+            <!-- (3) Competitor Analysis & Competitive Dynamics -->
+            <div class="tp-sub-card">
+              <h3 class="tp-sub-card-title"><i data-lucide="swords"></i> (3) Competitor Analysis & Dynamics Matrix</h3>
+              <table class="competitor-matrix">
+                <thead>
+                  <tr>
+                    <th>Brand</th>
+                    <th>Resource Similarity</th>
+                    <th>Market Commonality</th>
+                    <th>Key Strategic Weapon</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>Sushiro (Direct Rival)</strong></td>
+                    <td><span class="competitor-badge high">Very High</span></td>
+                    <td><span class="competitor-badge high">Very High</span></td>
+                    <td>High fresh seafood quality reputation (Tuna focus).</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Sushi Express (爭鮮)</strong></td>
+                    <td><span class="competitor-badge med">Moderate-High</span></td>
+                    <td><span class="competitor-badge high">Very High</span></td>
+                    <td>Hundreds of transit-hub branches, budget pricing (NT$30).</td>
+                  </tr>
+                </tbody>
+              </table>
+              <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 10px;"><strong>Competitive Dynamics:</strong> When Kura launches limited-edition IP toys (Chiikawa), Sushiro counters with high-grade Seared Salmon events, while Sushi Express offers high-value takeout lunch boxes.</p>
+            </div>
+
+            <!-- (4) Five Forces Framework -->
+            <div class="tp-sub-card">
+              <h3 class="tp-sub-card-title"><i data-lucide="radar"></i> (4) Industry Assessment - Porter's Five Forces</h3>
+              <div style="display: flex; flex-direction: column; gap: 8px; font-size: 0.85rem;">
+                <p><strong>1. Industry Rivalry (Extreme - 4.8/5):</strong> Three dominant giants engage in aggressive selections and real-estate battles.</p>
+                <p><strong>2. Buyer Power (High - 3.5/5):</strong> Zero customer switching costs; loyalty is heavily driven by co-branded promotional toys.</p>
+                <p><strong>3. Supplier Power (Low-Moderate - 2.5/5):</strong> Cushioned by global corporate scale imports and long-term futures.</p>
+                <p><strong>4. Threat of Substitutes (Very High - 4.5/5):</strong> Warm hotpot, ramen, and food delivery apps counter cold raw sushi during winters.</p>
+                <p><strong>5. Threat of New Entrants (Low - 2.0/5):</strong> High CapEx required to duplicate automated mekatronics serves as a solid barrier.</p>
+              </div>
+            </div>
+
+            <!-- (5) Industry Lifecycle & Recent News -->
+            <div class="tp-sub-card" style="grid-column: span 2;">
+              <h3 class="tp-sub-card-title"><i data-lucide="info"></i> (5) Lifecycle Stages & Financial News</h3>
+              <div style="display: flex; gap: 20px; font-size: 0.85rem; align-items: center;">
+                <div style="flex: 1;">
+                  <p><strong>Lifecycle Stage: Maturity Phase</strong></p>
+                  <p style="color: var(--text-secondary); margin-top: 4px;">Taiwan's conveyor sushi sector has reached maturity. Year-on-year industry growth slows to 4-5%. Strategic pivot points shift away from simple store count expansion towards digital loyalty App lifetime values and precision kitchen inventory forecasting (food waste reduced to 1.5%).</p>
+                </div>
+                <div style="flex: 1; border-left: 2px solid var(--border-color); padding-left: 20px;">
+                  <p><strong>Recent Financial News & Numbers:</strong></p>
+                  <p style="color: var(--text-secondary); margin-top: 4px;">Through FY2025, average net profit margins for Taiwan's conveyor sushi brands remain locked at 7.2%. Kura Sushi successfully outperforms the average, securing an 8.4% net margin by implementing completely contactless checkout kiosks and kitchen automations.</p>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        `
+      },
+      tp2: {
+        badge: "TP 2: INTERNAL RESOURCE & CORE CAPABILITIES",
+        title: "TP 2: Internal Analysis",
+        desc: "Examines Kura Sushi's core business segments, primary vs supporting value chain mekatronics activities, VRIO resources matrix, and dynamic capabilities.",
+        html: `
+          <div class="tp-grid-2 animated-fade">
+            
+            <!-- (1) Core Businesses / Product lines -->
+            <div class="tp-sub-card">
+              <h3 class="tp-sub-card-title"><i data-lucide="pie-chart"></i> (1) Core Businesses & Revenue Streams</h3>
+              <p style="font-size: 0.85rem; margin-bottom: 12px;">Revenue streams of Kura Sushi Taiwan:</p>
+              <div style="display: flex; flex-direction: column; gap: 10px; font-size: 0.85rem;">
+                <div>
+                  <div style="display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: 700; margin-bottom: 2px;">
+                    <span>Classic Conveyor Sushi Plates</span>
+                    <span>82%</span>
+                  </div>
+                  <div style="height: 8px; background: rgba(0,0,0,0.05); border-radius: var(--radius-full); overflow: hidden;">
+                    <div style="width: 82%; height: 100%; background: var(--brand-red);"></div>
+                  </div>
+                </div>
+                <div>
+                  <div style="display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: 700; margin-bottom: 2px;">
+                    <span>Hot Foods (Ramen, Tempura, Soup)</span>
+                    <span>12%</span>
+                  </div>
+                  <div style="height: 8px; background: rgba(0,0,0,0.05); border-radius: var(--radius-full); overflow: hidden;">
+                    <div style="width: 12%; height: 100%; background: var(--lantern-gold);"></div>
+                  </div>
+                </div>
+                <div>
+                  <div style="display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: 700; margin-bottom: 2px;">
+                    <span>Premium Desserts & Soft Drinks</span>
+                    <span>6%</span>
+                  </div>
+                  <div style="height: 8px; background: rgba(0,0,0,0.05); border-radius: var(--radius-full); overflow: hidden;">
+                    <div style="width: 6%; height: 100%; background: var(--wasabi-green);"></div>
+                  </div>
+                </div>
+              </div>
+              <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 10px;"><strong>Market Share:</strong> Controls approximately 38% share in Taiwan's premium mid-to-high conveyor sushi sector, standing on par with direct rival Sushiro.</p>
+            </div>
+
+            <!-- (2) Corporate Value Chain – Key Activities -->
+            <div class="tp-sub-card">
+              <h3 class="tp-sub-card-title"><i data-lucide="layers"></i> (2) Corporate Value Chain Matrix</h3>
+              <div style="display: flex; flex-direction: column; gap: 10px; font-size: 0.85rem;">
+                <div style="border-bottom: 1px solid var(--border-color); padding-bottom: 6px;">
+                  <span class="tp-nav-tag" style="color: var(--brand-red);">PRIMARY ACTIVITIES</span>
+                  <p style="margin-top: 2px; color: var(--text-secondary); font-size: 0.8rem;">Automated sushi-forming mekatronics (Operations), express bullet track delivery (Outbound), co-branded Bikkura Pon capsule toy loops (Marketing), and self checkout (Service).</p>
+                </div>
+                <div>
+                  <span class="tp-nav-tag" style="color: var(--wasabi-green);">SUPPORTING ACTIVITIES</span>
+                  <p style="margin-top: 2px; color: var(--text-secondary); font-size: 0.8rem;">Centralized mekatronics patent maintenance and software updates, co-branded licensing negotiations, and digital training modules to bypass manual labor dependency.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- (3) Key Resources – Tangible & Intangible -->
+            <div class="tp-sub-card">
+              <h3 class="tp-sub-card-title"><i data-lucide="gem"></i> (3) Key Resources (Tangible vs Intangible)</h3>
+              <div style="display: flex; gap: 16px; font-size: 0.85rem;">
+                <div style="flex: 1; background: rgba(0,0,0,0.02); padding: 12px; border-radius: var(--radius-md);">
+                  <p><strong>Tangible Resources:</strong></p>
+                  <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 4px;">56+ premium standalone and mall-based real-estate branches, locked cold-chain vehicle logistics networks, and robust debt-free cash flows.</p>
+                </div>
+                <div style="flex: 1; background: rgba(0,0,0,0.02); padding: 12px; border-radius: var(--radius-md);">
+                  <p><strong>Intangible Resources:</strong></p>
+                  <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 4px;">Paten rights for "Mr. Fresh" dome shields, under-table water chutes patents, and exclusive licensing contracts with top anime IP creators.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- (4) Core Competencies & Partners -->
+            <div class="tp-sub-card">
+              <h3 class="tp-sub-card-title"><i data-lucide="handshake"></i> (4) Core Competencies & Key Partners</h3>
+              <div style="display: flex; flex-direction: column; gap: 8px; font-size: 0.85rem;">
+                <p><strong>Core Competency:</strong> The synergy of restaurant logistics Industrial Engineering (slashing dishwashing costs by 35%) with gamified marketing incentives (co-branded Chiikawa toys) that push users to consume extra plates.</p>
+                <p><strong>Key Partners (Annual Reports):</strong> Japanese parent company (global wholesale buying power), mall operators (high-traffic sites), local logistics cold-chain networks, and character licensing agencies.</p>
+              </div>
+            </div>
+
+            <!-- (5) Dynamic Capabilities -->
+            <div class="tp-sub-card" style="grid-column: span 2;">
+              <h3 class="tp-sub-card-title"><i data-lucide="refresh-cw"></i> (5) Dynamic Capabilities & Real-world Adaptations</h3>
+              <p style="font-size: 0.85rem; margin-bottom: 12px; color: var(--text-secondary);">Dynamic capability refers to a firm's ability to rapidly integrate, reconfigure, and update its internal competencies to counter macro-market disruptions:</p>
+              <div style="display: flex; gap: 20px; font-size: 0.85rem;">
+                <div style="flex: 1; border-left: 3px solid var(--brand-red); padding-left: 14px;">
+                  <strong>Agile COVID-19 Pivot:</strong>
+                  <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 4px;">In 2021, when dine-in was restricted, Kura refitted its reservation App in 3 weeks to launch "Takeout co-branded capsule boxes", including actual toys with takeout orders to maintain revenue streams and protect brand equity.</p>
+                </div>
+                <div style="flex: 1; border-left: 3px solid var(--wasabi-green); padding-left: 14px;">
+                  <strong>Labor Shortage Adaptation:</strong>
+                  <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 4px;">Introduced high-precision E-table tablets and self checkout kiosks across all branches in Taiwan, successfully lowering front-desk cashiers dependency by 40% and shielding profit margins from basic wage spikes.</p>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        `
+      },
+      tp3: {
+        badge: "TP 3: CORPORATE GROWTH & STRATEGIC CHALLENGES",
+        title: "TP 3: Growth and Challenges",
+        desc: "Deconstructs Kura Sushi's backward vertical integration, horizontal menu expansions, domestic streetside Flagship models, strategic international joint ventures, and future risk mitigations.",
+        html: `
+          <div class="tp-grid-2 animated-fade">
+            
+            <!-- (1) Vertical Integration -->
+            <div class="tp-sub-card">
+              <h3 class="tp-sub-card-title"><i data-lucide="git-merge"></i> (1) Backward Vertical Integration</h3>
+              <p style="font-size: 0.85rem; color: var(--text-secondary);">Kura Sushi deploys targeted backward vertical integration:</p>
+              <div style="display: flex; flex-direction: column; gap: 8px; font-size: 0.85rem; margin-top: 10px;">
+                <p><i data-lucide="check" style="width: 14px; color: var(--wasabi-green); display: inline; margin-right: 6px;"></i> Invests directly in seafood slicing and processing factories, bypassing third-party wholesalers and raw material agents.</p>
+                <p><i data-lucide="check" style="width: 14px; color: var(--wasabi-green); display: inline; margin-right: 6px;"></i> Secures flawless sanitation controls and increases gross margins on core salmon and tuna cuts by approximately 4%.</p>
+              </div>
+            </div>
+
+            <!-- (2) Horizontal / Product Diversification -->
+            <div class="tp-sub-card">
+              <h3 class="tp-sub-card-title"><i data-lucide="expand"></i> (2) Horizontal Menu & Product Diversification</h3>
+              <div style="display: flex; flex-direction: column; gap: 8px; font-size: 0.85rem;">
+                <p><strong>Hot Food Horizontal Categories:</strong> Introduces seared hot toppings, ramen, tempura shrimp, and warm steamed egg custards to capture elderly diners, children, and cold-food non-eaters, balancing seasonal winter demand declines.</p>
+                <p><strong>Premium Dessert Multi-category development:</strong> Taiyaki, matcha sundaes, and puddings. Desserts act as a key secondary driver, yielding extremely high margins and creating viral social media coverage.</p>
+              </div>
+            </div>
+
+            <!-- (3) Geographical Expansion -->
+            <div class="tp-sub-card">
+              <h3 class="tp-sub-card-title"><i data-lucide="navigation"></i> (3) Geographical Paths & Standalone Storefronts</h3>
+              <div style="display: flex; flex-direction: column; gap: 10px; font-size: 0.85rem;">
+                <div style="background: rgba(0,0,0,0.02); padding: 10px; border-radius: var(--radius-sm);">
+                  <strong>Domestic: Standalone "Tuzang" Streetside Flagships (Greenfield)</strong>
+                  <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 4px;">Constructs traditional warehouse-style streetside stores in suburban hubs (e.g., Changhua, Pingtung). Standalone flagships feature massive parking slots, bypass department store commissions (saving 10%-13% in rent cuts), and lock in long-term low land rents.</p>
+                </div>
+                <div style="background: rgba(0,0,0,0.02); padding: 10px; border-radius: var(--radius-sm);">
+                  <strong>International: Joint Venture (JV) & Strategic Alliances</strong>
+                  <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 4px;">Leverages Taiwan's success as a model hub to scale into Southeast Asia, setting up Joint Ventures with local retail conglomerates in Singapore and Malaysia to mitigate geopolitical risks.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- (4) Future Challenges and Suggestions -->
+            <div class="tp-sub-card suggestion-card red">
+              <h3 class="tp-sub-card-title"><i data-lucide="alert-triangle"></i> Future Challenges & Risks</h3>
+              <div style="display: flex; flex-direction: column; gap: 8px; font-size: 0.85rem;">
+                <p><strong>⚠️ Toy Gamification Fatigue:</strong> Customers eventually experience visual and interactive fatigue with the Bikkura Pon concept. If the co-branded IP lacks momentum, diners shift to premium rivals.</p>
+                <p><strong>⚠️ Global Seafood Cold-Chain Inflation:</strong> Ocean warming and overfishing spikes raw seafood procurement costs. Single-plate value pricing leaves thin margins under inflation.</p>
+              </div>
+            </div>
+
+            <div class="tp-sub-card suggestion-card" style="grid-column: span 2;">
+              <h3 class="tp-sub-card-title" style="color: var(--wasabi-green); border-bottom-color: rgba(109, 176, 54, 0.2);"><i data-lucide="lightbulb" style="color: var(--wasabi-green);"></i> Key Forward-looking Suggestions for Kura</h3>
+              <div style="display: flex; gap: 20px; font-size: 0.85rem;">
+                <div style="flex: 1;">
+                  <strong>1. Digitalized membership loyalty ecosystem (App 3.0):</strong>
+                  <p style="color: var(--text-secondary); font-size: 0.8rem; margin-top: 4px;">Transform the App to include "virtual toy trade boards" and digital collectible albums. Customers trade points for digital IP items, maintaining strong brand stickiness without relying solely on physical toy CapEx.</p>
+                </div>
+                <div style="flex: 1; border-left: 1px solid var(--border-color); padding-left: 20px;">
+                  <strong>2. Introduce sustainable plant-based seafood sushi (ESG branding):</strong>
+                  <p style="color: var(--text-secondary); font-size: 0.8rem; margin-top: 4px;">Launch low-carbon plant-based sushi (e.g., konjac-based mock salmon) to capture Gen-Z eco-conscious diners, hedging ocean supply chain spikes and driving a green brand differentiation.</p>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        `
+      }
+    }
+  };
+
+  const activeTP = tpDataBilingual[currentLang][`tp${tpIndex}`];
+  if (!activeTP) return;
+
+  // Render content in overlay
+  contentWrapper.innerHTML = `
+    <div class="tp-section-header">
+      <span class="tp-section-badge">${activeTP.badge}</span>
+      <h1 class="tp-section-title">${activeTP.title}</h1>
+      <p class="case-text" style="margin-top: 8px; color: var(--text-secondary); font-size: 0.95rem;">${activeTP.desc}</p>
+    </div>
+    <div class="tp-content-body-area">
+      ${activeTP.html}
+    </div>
+  `;
+
+  // Draw stateful interactive widgets for TP 0 on load
+  if (tpIndex === 0) {
+    drawFinancialChartWidget();
+    updateRoadmapSlideDisplay();
+  }
+
+  // Trigger Lucide on newly injected components
+  lucide.createIcons();
+}
+
+window.toggleOrgNode = function(nodeId) {
+  const node = document.getElementById(nodeId);
+  if (node) {
+    if (node.style.display === 'none' || node.style.display === '') {
+      node.style.display = 'flex';
+    } else {
+      node.style.display = 'none';
+    }
+  }
+};
+
+function drawFinancialChartWidget() {
+  const wrapper = document.getElementById('chart-svg-wrapper');
+  if (!wrapper) return;
+
+  const isZh = state.language === 'zh';
+  const revenueData = [2.52, 3.88, 4.95, 5.15, 5.38];
+  const profitData = [80, 180, 260, 290, 310];
+  const years = [2021, 2022, 2023, 2024, 2025];
+
+  const mode = state.tpFinancialMode;
+  const data = mode === 'revenue' ? revenueData : profitData;
+  
+  let unit = mode === 'revenue' ? 'NT$ B' : 'NT$ M';
+  if (isZh) {
+    unit = mode === 'revenue' ? '十億元' : '百萬元';
+  }
+
+  const strokeColor = mode === 'revenue' ? '#E51A24' : '#E0A23B';
+  const maxVal = Math.max(...data) * 1.15;
+  const minVal = 0;
+
+  const width = 500;
+  const height = 200;
+  const paddingLeft = 55;
+  const paddingRight = 30;
+  const paddingTop = 25;
+  const paddingBottom = 30;
+
+  const chartWidth = width - paddingLeft - paddingRight;
+  const chartHeight = height - paddingTop - paddingBottom;
+
+  const points = data.map((val, i) => {
+    const x = paddingLeft + (i / (data.length - 1)) * chartWidth;
+    const y = paddingTop + chartHeight - ((val - minVal) / (maxVal - minVal)) * chartHeight;
+    return { x, y, val, year: years[i] };
+  });
+
+  const polylinePoints = points.map(p => `${p.x},${p.y}`).join(' ');
+
+  let gridLinesHtml = '';
+  for (let i = 0; i <= 4; i++) {
+    const ratio = i / 4;
+    const y = paddingTop + ratio * chartHeight;
+    const value = maxVal - ratio * (maxVal - minVal);
+    gridLinesHtml += `
+      <line x1="${paddingLeft}" y1="${y}" x2="${width - paddingRight}" y2="${y}" class="chart-grid-line" />
+      <text x="${paddingLeft - 10}" y="${y + 4}" text-anchor="end" fill="var(--text-secondary)" style="font-size: 9px; font-weight: 500;">${value.toFixed(1)}</text>
+    `;
+  }
+
+  let dotsHtml = '';
+  points.forEach((p, i) => {
+    dotsHtml += `
+      <circle cx="${p.x}" cy="${p.y}" r="6" fill="${strokeColor}" class="chart-dot" id="dot-${i}" onmouseover="showChartTooltip(event, '${p.val} ${unit}', ${p.x}, ${p.y})" onmouseout="hideChartTooltip()"/>
+      <text x="${p.x}" y="${height - paddingBottom + 16}" text-anchor="middle" fill="var(--text-primary)" style="font-size: 10px; font-weight: 600;">${p.year}</text>
+      <text x="${p.x}" y="${p.y - 12}" text-anchor="middle" class="chart-value-label" fill="${strokeColor}">${p.val} ${unit}</text>
+    `;
+  });
+
+  wrapper.innerHTML = `
+    <svg viewBox="0 0 500 200" width="100%" height="100%" style="overflow: visible;">
+      <!-- Grid lines -->
+      ${gridLinesHtml}
+      <!-- Line path -->
+      <polyline points="${polylinePoints}" class="chart-line-path" stroke="${strokeColor}" />
+      <!-- Data dots and years -->
+      ${dotsHtml}
+    </svg>
+    <div id="chart-tooltip" style="position: absolute; display: none; background: rgba(0,0,0,0.85); color: #fff; padding: 4px 8px; border-radius: var(--radius-sm); font-size: 0.75rem; pointer-events: none; font-weight: 600; z-index: 10;"></div>
+  `;
+}
+
+window.toggleFinancialChart = function(mode) {
+  state.tpFinancialMode = mode;
+  const revBtn = document.getElementById('chart-btn-revenue');
+  const profBtn = document.getElementById('chart-btn-profit');
+  if (revBtn) revBtn.classList.toggle('active', mode === 'revenue');
+  if (profBtn) profBtn.classList.toggle('active', mode === 'profit');
+  drawFinancialChartWidget();
+};
+
+window.showChartTooltip = function(event, text, x, y) {
+  const tooltip = document.getElementById('chart-tooltip');
+  if (tooltip) {
+    tooltip.style.display = 'block';
+    tooltip.textContent = text;
+    tooltip.style.left = `${x - 20}px`;
+    tooltip.style.top = `${y - 40}px`;
+  }
+};
+
+window.hideChartTooltip = function() {
+  const tooltip = document.getElementById('chart-tooltip');
+  if (tooltip) tooltip.style.display = 'none';
+};
+
+window.slideRoadmap = function(direction) {
+  state.tpRoadmapIndex += direction;
+  if (state.tpRoadmapIndex < 0) state.tpRoadmapIndex = 2;
+  if (state.tpRoadmapIndex > 2) state.tpRoadmapIndex = 0;
+  updateRoadmapSlideDisplay();
+};
+
+function updateRoadmapSlideDisplay() {
+  const track = document.getElementById('roadmap-cards-track');
+  const indicator = document.getElementById('roadmap-phase-indicator');
+  if (track) {
+    const offset = -state.tpRoadmapIndex * 100;
+    track.style.transform = `translateX(${offset}%)`;
+  }
+  if (indicator) {
+    if (state.language === 'zh') {
+      indicator.textContent = `第 ${state.tpRoadmapIndex + 1} 階段 / 共 3 階段`;
+    } else {
+      indicator.textContent = `Phase ${state.tpRoadmapIndex + 1} of 3`;
+    }
+  }
 }
 
 function handlePlateConsumed(item) {

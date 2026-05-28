@@ -2748,3 +2748,791 @@ body {
     text-align: center;
   }
 }
+
+/* ==========================================================================
+   17. FLOATING SUSHI MENU & INTERACTIVE TP WORKSPACE STYLES
+   ========================================================================== */
+
+/* Floating Container on Left */
+.floating-sushi-menu {
+  position: fixed;
+  left: 24px;
+  top: 80px;
+  z-index: 10002;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  pointer-events: none;
+}
+
+/* Enable pointer events only for interactive items */
+.floating-sushi-menu * {
+  pointer-events: auto;
+}
+
+/* Main Sushi Trigger Button */
+.sushi-button {
+  width: 72px;
+  height: 72px;
+  border-radius: var(--radius-full);
+  background: var(--bg-surface);
+  border: 3px solid var(--brand-red);
+  box-shadow: var(--shadow-lg), 0 0 15px rgba(229, 26, 36, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+  position: relative;
+  z-index: 2;
+  animation: float-sushi 4s ease-in-out infinite;
+}
+
+.sushi-button:hover {
+  box-shadow: var(--shadow-lg), 0 0 25px rgba(229, 26, 36, 0.6);
+  animation: wiggle-sushi 0.5s ease-in-out infinite alternate;
+}
+
+.floating-sushi-menu.open .sushi-button {
+  transform: rotate(90deg) scale(1.05);
+  border-color: var(--wasabi-green);
+  box-shadow: var(--shadow-lg), 0 0 25px rgba(109, 176, 54, 0.6);
+  animation: none;
+}
+
+/* SVG Sushi details styling */
+.sushi-svg {
+  width: 54px;
+  height: 54px;
+  transition: transform 0.3s ease;
+}
+
+.sushi-rice {
+  fill: #FFFFFF;
+  filter: drop-shadow(0 2px 2px rgba(0,0,0,0.1));
+}
+
+.sushi-salmon {
+  fill: #FF7F50; /* Salmon Coral */
+}
+
+.sushi-marbling {
+  stroke: #FFA07A;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+}
+
+.sushi-nori {
+  fill: #1A2421; /* Dark Seaweed Green-Black */
+}
+
+/* Cascading Plate Sub-menu */
+.plates-submenu {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  opacity: 0;
+  transform: translateY(-20px) scale(0.9);
+  pointer-events: none;
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: absolute;
+  top: 84px;
+  left: 3px;
+}
+
+.floating-sushi-menu.open .plates-submenu {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+
+/* Colored Plates Sub-buttons */
+.plate-menu-btn {
+  width: 58px;
+  height: 58px;
+  border-radius: var(--radius-full);
+  border: 3px solid var(--border-color);
+  background: var(--bg-surface);
+  box-shadow: var(--shadow-md);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.3s ease, border-color 0.3s ease;
+  position: relative;
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 0.95rem;
+}
+
+/* Micro-stagger for cascading menu */
+.floating-sushi-menu.open .plate-menu-btn:nth-child(1) { transition-delay: 0.05s; }
+.floating-sushi-menu.open .plate-menu-btn:nth-child(2) { transition-delay: 0.1s; }
+.floating-sushi-menu.open .plate-menu-btn:nth-child(3) { transition-delay: 0.15s; }
+.floating-sushi-menu.open .plate-menu-btn:nth-child(4) { transition-delay: 0.2s; }
+
+/* Colors for specific plates */
+.plate-tp0 { border-color: #E51A24; color: #E51A24; } /* Tuna Red */
+.plate-tp1 { border-color: #FF7F50; color: #FF7F50; } /* Salmon Orange */
+.plate-tp2 { border-color: #E0A23B; color: #E0A23B; } /* Tamago Yellow */
+.plate-tp3 { border-color: #6DB036; color: #6DB036; } /* Kappa Green */
+
+.plate-menu-btn:hover {
+  transform: scale(1.15) translateY(-4px);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.15), 0 0 10px currentColor;
+  z-index: 5;
+}
+
+/* Tooltip overlay next to plates */
+.plate-tooltip {
+  position: absolute;
+  left: 72px;
+  background: rgba(0, 0, 0, 0.85);
+  color: #fff;
+  padding: 6px 14px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateX(-10px);
+  pointer-events: none;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-md);
+  border-left: 3px solid currentColor;
+}
+
+.plate-menu-btn:hover .plate-tooltip {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Fullscreen Immersive Glassmorphism Workspace Overlay */
+.tp-workspace-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(10, 12, 16, 0.8);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  z-index: 10001;
+  display: flex;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.tp-workspace-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Master Glass Card layout */
+.tp-workspace-glass {
+  width: 96%;
+  height: 94%;
+  margin: auto;
+  background: var(--bg-surface-glass);
+  border: var(--card-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  overflow: hidden;
+  transform: scale(0.95) translateY(20px);
+  transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.tp-workspace-overlay.active .tp-workspace-glass {
+  transform: scale(1) translateY(0);
+}
+
+/* Sidebar navigation */
+.tp-sidebar {
+  width: 320px;
+  background: rgba(0, 0, 0, 0.05);
+  border-right: 1px solid var(--border-color);
+  padding: 30px 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+
+/* Sidebar header */
+.tp-sidebar-header {
+  border-bottom: 2px solid var(--border-color);
+  padding-bottom: 20px;
+  margin-bottom: 30px;
+}
+
+.tp-sidebar-header h2 {
+  font-family: var(--font-heading);
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--brand-red);
+  letter-spacing: 0.5px;
+}
+
+.tp-sidebar-header p {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+/* Navigation items */
+.tp-nav-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.tp-nav-item {
+  width: 100%;
+  padding: 14px 18px;
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  transition: all 0.3s ease;
+  font-family: var(--font-body);
+}
+
+.tp-nav-item:hover {
+  background: rgba(229, 26, 36, 0.04);
+  border-color: rgba(229, 26, 36, 0.1);
+}
+
+.tp-nav-item.active {
+  background: var(--bg-surface);
+  border-color: var(--border-color);
+  box-shadow: var(--shadow-sm);
+  position: relative;
+}
+
+.tp-nav-item.active::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 15%;
+  height: 70%;
+  width: 4px;
+  background: currentColor;
+  border-radius: 0 4px 4px 0;
+}
+
+.tp-nav-tag {
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  margin-bottom: 2px;
+}
+
+.tp-nav-title {
+  font-family: var(--font-heading);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.3;
+}
+
+/* Sidebar footer buttons */
+.tp-sidebar-footer {
+  border-top: 1px solid var(--border-color);
+  padding-top: 20px;
+  margin-top: 30px;
+}
+
+.btn-tp-back {
+  width: 100%;
+  padding: 12px;
+  border-radius: var(--radius-md);
+  background: var(--brand-red);
+  color: #fff;
+  border: none;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: background 0.3s ease, transform 0.2s ease;
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-tp-back:hover {
+  background: var(--brand-red-hover);
+  transform: translateY(-2px);
+}
+
+/* Main Content Area */
+.tp-content-wrapper {
+  flex-grow: 1;
+  padding: 40px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Scrollbar customization for content */
+.tp-content-wrapper::-webkit-scrollbar {
+  width: 8px;
+}
+.tp-content-wrapper::-webkit-scrollbar-track {
+  background: transparent;
+}
+.tp-content-wrapper::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: var(--radius-full);
+}
+.tp-content-wrapper::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
+}
+
+/* Main inner title and content grid */
+.tp-section-header {
+  margin-bottom: 30px;
+  border-bottom: 2px solid var(--border-color);
+  padding-bottom: 16px;
+}
+
+.tp-section-badge {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 0.95rem;
+  color: var(--brand-red);
+  letter-spacing: 1px;
+}
+
+.tp-section-title {
+  font-family: var(--font-heading);
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-top: 4px;
+}
+
+/* Grid layout for cards */
+.tp-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+  margin-bottom: 30px;
+}
+
+.tp-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-bottom: 30px;
+}
+
+.tp-sub-card {
+  background: var(--bg-surface);
+  border: var(--card-border);
+  border-radius: var(--radius-md);
+  padding: 24px;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.tp-sub-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.tp-sub-card-title {
+  font-family: var(--font-heading);
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 8px;
+}
+
+.tp-sub-card-title i {
+  color: var(--brand-red);
+}
+
+/* Stateful Widgets */
+
+/* Live Financial SVG Chart */
+.financial-chart-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.chart-controls {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.chart-btn {
+  padding: 8px 16px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border-color);
+  background: var(--bg-primary);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--text-secondary);
+  transition: all 0.2s ease;
+}
+
+.chart-btn.active {
+  background: var(--brand-red);
+  border-color: var(--brand-red);
+  color: #fff;
+  box-shadow: var(--shadow-sm);
+}
+
+.chart-svg-wrapper {
+  background: rgba(0,0,0,0.02);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  border: 1px solid var(--border-color);
+  position: relative;
+  overflow: hidden;
+}
+
+.chart-grid-line {
+  stroke: var(--border-color);
+  stroke-dasharray: 4,4;
+  stroke-width: 1;
+}
+
+.chart-line-path {
+  fill: none;
+  stroke-width: 3.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: d 0.5s ease;
+}
+
+.chart-dot {
+  stroke: var(--bg-surface);
+  stroke-width: 2.5;
+  cursor: pointer;
+  transition: r 0.2s ease;
+}
+
+.chart-dot:hover {
+  r: 8px;
+}
+
+.chart-value-label {
+  font-family: var(--font-heading);
+  font-size: 11px;
+  font-weight: 700;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+/* History Timeline visual */
+.vertical-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  position: relative;
+  padding-left: 24px;
+}
+
+.vertical-timeline::before {
+  content: '';
+  position: absolute;
+  left: 6px;
+  top: 8px;
+  bottom: 8px;
+  width: 2px;
+  background: var(--border-color);
+}
+
+.timeline-node {
+  position: relative;
+}
+
+.timeline-dot {
+  position: absolute;
+  left: -24px;
+  top: 6px;
+  width: 14px;
+  height: 14px;
+  border-radius: var(--radius-full);
+  background: var(--bg-surface);
+  border: 3.5px solid var(--brand-red);
+  box-shadow: var(--shadow-sm);
+}
+
+.timeline-year {
+  font-family: var(--font-heading);
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--brand-red);
+}
+
+.timeline-txt {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-top: 2px;
+  line-height: 1.4;
+}
+
+/* Interactive Organizational structure tree */
+.org-structure-tree {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 10px;
+}
+
+.org-node {
+  border-left: 3px solid var(--border-color);
+  padding-left: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.org-node-children {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-left: 10px;
+  margin-top: 4px;
+  transition: all 0.3s ease;
+}
+
+.org-leaf {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.org-leaf::before {
+  content: '•';
+  color: var(--brand-red);
+  font-size: 1.2rem;
+}
+
+/* Product roadmap slider */
+.roadmap-slider-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.roadmap-slider-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.roadmap-btn {
+  background: none;
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.roadmap-btn:hover {
+  background: var(--border-color);
+}
+
+.roadmap-cards-viewport {
+  overflow: hidden;
+  width: 100%;
+}
+
+.roadmap-cards-track {
+  display: flex;
+  transition: transform 0.4s ease;
+}
+
+.roadmap-slide-card {
+  min-width: 100%;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.roadmap-phase {
+  font-family: var(--font-heading);
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: var(--lantern-gold);
+}
+
+.roadmap-title {
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.roadmap-bullets {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.roadmap-bullets li {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.roadmap-bullets i {
+  color: var(--wasabi-green);
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+/* Competitor similarity matrix grid */
+.competitor-matrix {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 8px;
+}
+
+.competitor-matrix th, .competitor-matrix td {
+  border: 1px solid var(--border-color);
+  padding: 10px;
+  font-size: 0.8rem;
+}
+
+.competitor-matrix th {
+  background: rgba(0,0,0,0.02);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  text-align: left;
+}
+
+.competitor-badge {
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.competitor-badge.high { background: rgba(229, 26, 36, 0.08); color: var(--brand-red); }
+.competitor-badge.med { background: rgba(224, 162, 59, 0.08); color: var(--lantern-gold); }
+.competitor-badge.low { background: rgba(109, 176, 54, 0.08); color: var(--wasabi-green); }
+
+/* Suggestion Card styling */
+.suggestion-card {
+  border-left: 4px solid var(--wasabi-green);
+  background: rgba(109, 176, 54, 0.04);
+}
+
+.suggestion-card.red {
+  border-left-color: var(--brand-red);
+  background: rgba(229, 26, 36, 0.04);
+}
+
+/* ----------------------------------------------------
+   18. ANIMATION KEYFRAMES & UTILITIES
+   ==================================================== */
+
+@keyframes float-sushi {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+  100% { transform: translateY(0); }
+}
+
+@keyframes wiggle-sushi {
+  0% { transform: rotate(-3deg) scale(1.05); }
+  100% { transform: rotate(3deg) scale(1.05); }
+}
+
+/* ----------------------------------------------------
+   19. RESPONSIVE MEDIA QUERIES FOR WORKSPACE
+   ==================================================== */
+@media (max-width: 900px) {
+  .tp-workspace-glass {
+    flex-direction: column;
+    height: 98%;
+    width: 98%;
+  }
+  
+  .tp-sidebar {
+    width: 100%;
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid var(--border-color);
+    padding: 16px;
+  }
+  
+  .tp-sidebar-header {
+    display: none;
+  }
+  
+  .tp-nav-list {
+    flex-direction: row;
+    overflow-x: auto;
+    gap: 8px;
+    padding-bottom: 6px;
+  }
+  
+  .tp-nav-item {
+    padding: 8px 12px;
+    flex-shrink: 0;
+    width: auto;
+  }
+  
+  .tp-nav-item.active::after {
+    left: 15%;
+    bottom: 0;
+    top: auto;
+    width: 70%;
+    height: 3px;
+  }
+  
+  .tp-sidebar-footer {
+    display: none;
+  }
+  
+  .tp-content-wrapper {
+    padding: 20px;
+  }
+  
+  .tp-grid-2, .tp-grid-3 {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  .floating-sushi-menu {
+    left: 12px;
+    top: 80px;
+  }
+}
+
