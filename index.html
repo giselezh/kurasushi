@@ -578,21 +578,85 @@
   <footer class="main-footer">
     <div class="footer-container">
       <div class="footer-left">
+        <!-- Baris Instructor -->
+        <div class="footer-instructor-row">
+          <span class="footer-label-prefix" data-i18n="footer.instructor.label">指導教授:</span>
+          <button class="btn-footer-profile btn-instructor" data-profile-id="instructor">Prof. Shihmin Lo 駱世民</button>
+        </div>
+        
+        <!-- Baris 6 Anggota Tim -->
+        <div class="footer-team-row">
+          <span class="footer-label-prefix" data-i18n="footer.team.label">團隊成員:</span>
+          <div class="footer-team-buttons">
+            <button class="btn-footer-profile" data-profile-id="delia">Delia</button>
+            <button class="btn-footer-profile" data-profile-id="tarastra">Tarastra</button>
+            <button class="btn-footer-profile" data-profile-id="alice">Alice</button>
+            <button class="btn-footer-profile" data-profile-id="gisele">Gisele</button>
+            <button class="btn-footer-profile" data-profile-id="vivian">Vivian</button>
+            <button class="btn-footer-profile" data-profile-id="vicky">Vicky</button>
+          </div>
+        </div>
+        <span class="footer-date" data-i18n="footer.date">個案發布日期：2026年5月</span>
+      </div>
+      <div class="footer-right">
         <span class="footer-brand">KURA SUSHI TAIWAN CASE STUDY</span>
         <p class="copyright" data-i18n="footer.copyright">&copy; 2026 國立大學企業管理研究所. All rights reserved.</p>
       </div>
-      <div class="footer-center">
-        <!-- CRITICAL PROFESSOR INSTRUCTOR ATTRIBUTION -->
-        <span class="instructor-credit">
-          <i data-lucide="award"></i> 
-          指導教授：羅世民 教授 &nbsp;|&nbsp; Instructor: Prof. Shihmin Lo
-        </span>
-      </div>
-      <div class="footer-right">
-        <span class="footer-date" data-i18n="footer.date">個案發布日期：2026年5月</span>
-      </div>
     </div>
   </footer>
+
+  <!-- Modal Dialog Biodata Baru -->
+  <div id="profile-modal" class="profile-modal-overlay">
+    <div class="profile-modal-glass animated-scale">
+      <button id="profile-modal-close" class="btn-close-profile" aria-label="Close Profile"><i data-lucide="x"></i></button>
+      <div class="profile-modal-body">
+        <!-- Sisi Kiri: Foto dan Info Penting -->
+        <div class="profile-left-panel">
+          <div class="profile-avatar-container">
+            <img id="profile-modal-photo" src="" alt="Profile Photo" class="profile-photo-img">
+          </div>
+          <h3 id="profile-modal-name" class="profile-main-name">Nama</h3>
+          
+          <!-- Info Fleksibel (NIM / Email / Jurusan) -->
+          <div class="profile-meta-info">
+            <div class="meta-row">
+              <span class="meta-label" id="profile-meta-id-label" data-i18n="profile.id.label">學號:</span>
+              <span class="meta-val" id="profile-modal-id">112212030</span>
+            </div>
+            <div class="meta-row">
+              <span class="meta-label" id="profile-meta-major-label" data-i18n="profile.major.label">系所年級:</span>
+              <span class="meta-val" id="profile-modal-major">國際企業學系三年級 (IBS)</span>
+            </div>
+          </div>
+          
+          <!-- Link Khusus Instruktur -->
+          <div id="profile-instructor-links" class="instructor-links-group" style="display: none;">
+            <a id="profile-link-blog" href="" target="_blank" class="btn-instructor-link blog-link">
+              <i data-lucide="globe"></i> <span data-i18n="profile.visit_blog">Visit NCNU Blog</span>
+            </a>
+            <a id="profile-link-youtube" href="" target="_blank" class="btn-instructor-link youtube-link">
+              <i data-lucide="youtube"></i> <span data-i18n="profile.visit_youtube">Visit YouTube Channel</span>
+            </a>
+          </div>
+        </div>
+        
+        <!-- Sisi Kanan: Pemutar Video D-ID YouTube -->
+        <div class="profile-right-panel">
+          <h4 class="video-section-title">
+            <i data-lucide="play-circle"></i> 
+            <span data-i18n="profile.video_title">D-ID 虛擬影音簡報</span>
+          </h4>
+          <div class="youtube-player-wrapper">
+            <iframe id="profile-modal-video" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+          </div>
+          <a id="profile-link-external-youtube" href="" target="_blank" class="btn-open-youtube">
+            <i data-lucide="external-link"></i> <span data-i18n="profile.watch_youtube">Tonton di YouTube</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="profile-overlay-bg" class="profile-overlay-bg"></div>
 
   <!-- Unified consolidated script -->
   <script src="app.js"></script>

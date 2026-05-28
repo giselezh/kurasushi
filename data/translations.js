@@ -113,7 +113,17 @@ export const translations = {
 
     // Footer
     "footer.copyright": "© 2026 國立大學企業管理研究所. 指導教授：羅世民 教授",
-    "footer.date": "個案發布日期：2026年5月"
+    "footer.date": "個案發布日期：2026年5月",
+    "footer.instructor.label": "指導教授:",
+    "footer.team.label": "團隊成員:",
+    "profile.id.label": "學號:",
+    "profile.email.label": "電子郵件:",
+    "profile.major.label": "系所年級:",
+    "profile.instructor_class.label": "授課班級:",
+    "profile.visit_blog": "訪問學術部落格",
+    "profile.visit_youtube": "訪問 YouTube 頻道",
+    "profile.watch_youtube": "在 YouTube 觀看",
+    "profile.video_title": "D-ID 虛擬影音簡報"
   },
   
   en: {
@@ -229,7 +239,17 @@ export const translations = {
 
     // Footer
     "footer.copyright": "© 2026 National University Graduate School of Business. Instructor: Prof. Shihmin Lo",
-    "footer.date": "Published: May 2026"
+    "footer.date": "Published: May 2026",
+    "footer.instructor.label": "Instructor:",
+    "footer.team.label": "Team Members:",
+    "profile.id.label": "Student ID:",
+    "profile.email.label": "E-mail:",
+    "profile.major.label": "Department & Year:",
+    "profile.instructor_class.label": "Instructor Class Of:",
+    "profile.visit_blog": "Visit NCNU Blog",
+    "profile.visit_youtube": "Visit YouTube Channel",
+    "profile.watch_youtube": "Watch on YouTube",
+    "profile.video_title": "D-ID Introduction Video"
   }
 };
 

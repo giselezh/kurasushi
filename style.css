@@ -2560,7 +2560,7 @@ body {
 .main-footer {
   background: var(--bg-surface);
   border-top: 1px solid var(--border-color);
-  padding: 30px 20px;
+  padding: 40px 20px;
   margin-top: 80px;
 }
 
@@ -2569,7 +2569,7 @@ body {
   margin: 0 auto;
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
 }
 
 .footer-brand {
@@ -2583,6 +2583,333 @@ body {
   font-size: 0.8rem;
   color: var(--text-secondary);
   margin-top: 4px;
+}
+
+/* Layout Baru Footer Kiri & Kanan */
+.footer-left {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.footer-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  text-align: right;
+  gap: 8px;
+}
+
+.footer-instructor-row, .footer-team-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.85rem;
+}
+
+.footer-label-prefix {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.5px;
+}
+
+.footer-team-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: flex-start;
+}
+
+/* Tombol Profil di Footer */
+.btn-footer-profile {
+  background: rgba(229, 26, 36, 0.04);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 0.8rem;
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.btn-footer-profile:hover {
+  background: var(--brand-red);
+  border-color: var(--brand-red);
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(229, 26, 36, 0.2);
+}
+
+.btn-footer-profile.btn-instructor {
+  background: rgba(224, 162, 59, 0.06);
+  border-color: rgba(224, 162, 59, 0.3);
+  color: var(--lantern-gold);
+}
+
+.btn-footer-profile.btn-instructor:hover {
+  background: var(--lantern-gold);
+  border-color: var(--lantern-gold);
+  color: #fff;
+  box-shadow: 0 4px 8px rgba(224, 162, 59, 0.2);
+}
+
+/* Modal Dialog Biodata Modern */
+.profile-modal-overlay {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.9);
+  width: 90%;
+  max-width: 800px;
+  background: var(--bg-surface-glass);
+  backdrop-filter: blur(20px);
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  z-index: 10002;
+  padding: 24px;
+  display: none;
+  opacity: 0;
+  transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.profile-modal-overlay.open {
+  display: block;
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.profile-overlay-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.65);
+  z-index: 10001;
+  display: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.profile-overlay-bg.active {
+  display: block;
+  opacity: 1;
+}
+
+/* Susunan Panel Modal */
+.profile-modal-body {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+/* Panel Kiri Modal */
+.profile-left-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 20px 16px;
+  background: rgba(0, 0, 0, 0.02);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  width: 100%;
+}
+
+.profile-avatar-container {
+  width: 120px;
+  height: 120px;
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  border: 3px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 16px;
+}
+
+.profile-photo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profile-main-name {
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+
+.profile-meta-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  margin-top: 10px;
+  text-align: left;
+}
+
+.meta-row {
+  display: flex;
+  flex-direction: column;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 4px;
+}
+
+.meta-row:last-child {
+  border-bottom: none;
+}
+
+.meta-label {
+  font-family: var(--font-heading);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+}
+
+.meta-val {
+  font-size: 0.85rem;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.profile-main-major {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+/* Group Link Instruktur */
+.instructor-links-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  margin-top: 16px;
+}
+
+.btn-instructor-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 0.8rem;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.btn-instructor-link.blog-link {
+  background: rgba(0,0,0,0.05);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+}
+.btn-instructor-link.blog-link:hover {
+  background: var(--border-color);
+}
+
+.btn-instructor-link.youtube-link {
+  background: rgba(229, 26, 36, 0.06);
+  color: var(--brand-red);
+  border: 1px solid rgba(229, 26, 36, 0.15);
+}
+.btn-instructor-link.youtube-link:hover {
+  background: var(--brand-red);
+  color: #fff;
+}
+
+/* Panel Kanan Modal - Pemutar Video */
+.profile-right-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+}
+
+.video-section-title {
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.youtube-player-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  background: #000;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+}
+
+.youtube-player-wrapper iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.btn-open-youtube {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: 1px solid var(--brand-red);
+  color: var(--brand-red);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 0.85rem;
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.btn-open-youtube:hover {
+  background: var(--brand-red);
+  color: #fff;
+}
+
+.btn-close-profile {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.btn-close-profile:hover {
+  color: var(--brand-red);
+}
+
+@media (max-width: 768px) {
+  .profile-modal-body {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .profile-modal-overlay {
+    padding: 16px;
+    width: 95%;
+  }
 }
 
 /* Attributions to Professor */
@@ -2718,6 +3045,14 @@ body {
     flex-direction: column;
     gap: 16px;
     text-align: center;
+    align-items: center;
+  }
+  .footer-left, .footer-right {
+    align-items: center;
+    text-align: center;
+  }
+  .footer-team-buttons {
+    justify-content: center;
   }
 }
 

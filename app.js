@@ -92,7 +92,17 @@ const translations = {
     "glossary.drawer.title": "專有名詞小百科",
     "theater.captions": "字幕開關 (Captions)",
     "footer.copyright": "© 2026 國立大學企業管理研究所. All rights reserved.",
-    "footer.date": "個案發布日期：2026年5月"
+    "footer.date": "個案發布日期：2026年5月",
+    "footer.instructor.label": "指導教授:",
+    "footer.team.label": "團隊成員:",
+    "profile.id.label": "學號:",
+    "profile.email.label": "電子郵件:",
+    "profile.major.label": "系所年級:",
+    "profile.instructor_class.label": "授課班級:",
+    "profile.visit_blog": "訪問學術部落格",
+    "profile.visit_youtube": "訪問 YouTube 頻道",
+    "profile.watch_youtube": "在 YouTube 觀看",
+    "profile.video_title": "D-ID 虛擬影音簡報"
   },
   en: {
     "nav.title": "Kura Sushi Asia Co., Ltd.(2754)",
@@ -178,7 +188,17 @@ const translations = {
     "glossary.drawer.title": "Mini Business Glossary",
     "theater.captions": "Toggle Subtitles",
     "footer.copyright": "© 2026 National University Graduate School of Business. All rights reserved.",
-    "footer.date": "Published: May 2026"
+    "footer.date": "Published: May 2026",
+    "footer.instructor.label": "Instructor:",
+    "footer.team.label": "Team Members:",
+    "profile.id.label": "Student ID:",
+    "profile.email.label": "E-mail:",
+    "profile.major.label": "Department & Year:",
+    "profile.instructor_class.label": "Instructor Class Of:",
+    "profile.visit_blog": "Visit NCNU Blog",
+    "profile.visit_youtube": "Visit YouTube Channel",
+    "profile.watch_youtube": "Watch on YouTube",
+    "profile.video_title": "D-ID Introduction Video"
   }
 };
 
@@ -459,6 +479,83 @@ const teamData = {
   ]
 };
 
+// Basis Data Profil Footer & Instruktur
+const footerProfilesData = {
+  instructor: {
+    name: "Prof. Shihmin Lo 駱世民",
+    majorZh: "SMMC-EMI 114-2 班級",
+    majorEn: "SMMC-EMI 114-2 class",
+    idOrEmail: "smlo@ncnu.edu.tw",
+    photoUrl: "images/profiles/shihmin_lo.jpg",
+    fallbackPhoto: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=250",
+    videoUrl: "https://youtu.be/d38n48INXR0?si=6Dv7XZansZ4CS-3c",
+    embedUrl: "https://www.youtube.com/embed/d38n48INXR0",
+    isInstructor: true,
+    blogUrl: "https://www.ibs.ncnu.edu.tw/index.php/faculty/tenured-professor/299-smlo",
+    ytChannelUrl: "https://youtube.com/@shihminlo6097?si=qkxiY1B7_34YeA3y"
+  },
+  delia: {
+    name: "Delia Zhang a.k.a 張棣惠",
+    majorZh: "國際企業學系三年級 (IBS)",
+    majorEn: "Department of International Business, 3rd Year (IBS)",
+    idOrEmail: "112212030",
+    photoUrl: "images/profiles/delia.jpg",
+    fallbackPhoto: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=250",
+    videoUrl: "https://www.youtube.com/watch?v=iyxHkT4S4K0",
+    embedUrl: "https://www.youtube.com/embed/iyxHkT4S4K0"
+  },
+  tarastra: {
+    name: "Tarastra a.k.a 劉珈佑",
+    majorZh: "國際企業學系三年級 (IBS)",
+    majorEn: "Department of International Business, 3rd Year (IBS)",
+    idOrEmail: "112212011",
+    photoUrl: "images/profiles/tarastra.jpg",
+    fallbackPhoto: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=250",
+    videoUrl: "https://youtu.be/3ZF7oNm_8Fs?si=F9nj4f0NBP7yoy-b",
+    embedUrl: "https://www.youtube.com/embed/3ZF7oNm_8Fs"
+  },
+  alice: {
+    name: "Alice a.k.a 林庭亦",
+    majorZh: "國際企業學系三年級 (IBS)",
+    majorEn: "Department of International Business, 3rd Year (IBS)",
+    idOrEmail: "112212031",
+    photoUrl: "images/profiles/alice.jpg",
+    fallbackPhoto: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&q=80&w=250",
+    videoUrl: "https://youtu.be/ZvReO5xG5mI?si=106axUiJm_g7VIfG",
+    embedUrl: "https://www.youtube.com/embed/ZvReO5xG5mI"
+  },
+  gisele: {
+    name: "Gisele a.k.a 鄭飛英",
+    majorZh: "國際企業學系三年級 (IBS)",
+    majorEn: "Department of International Business, 3rd Year (IBS)",
+    idOrEmail: "112212051",
+    photoUrl: "images/profiles/gisele.jpg",
+    fallbackPhoto: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=250",
+    videoUrl: "https://youtu.be/-6JmL8DWODE",
+    embedUrl: "https://www.youtube.com/embed/-6JmL8DWODE"
+  },
+  vivian: {
+    name: "Vivian a.k.a 許薇荌",
+    majorZh: "國際企業學系三年級 (IBS)",
+    majorEn: "Department of International Business, 3rd Year (IBS)",
+    idOrEmail: "112212052",
+    photoUrl: "images/profiles/vivian.jpg",
+    fallbackPhoto: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=250",
+    videoUrl: "https://youtu.be/ShkjfaVv204?si=FQLCt_DB2zkceFZU",
+    embedUrl: "https://www.youtube.com/embed/ShkjfaVv204"
+  },
+  vicky: {
+    name: "Vicky a.k.a 楊慧賢",
+    majorZh: "國際企業學系三年級 (IBS)",
+    majorEn: "Department of International Business, 3rd Year (IBS)",
+    idOrEmail: "112212060",
+    photoUrl: "images/profiles/vicky.jpg",
+    fallbackPhoto: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&q=80&w=250",
+    videoUrl: "https://youtu.be/XDudquAPrEQ?si=h7CYwrCerCytDOZx",
+    embedUrl: "https://www.youtube.com/embed/XDudquAPrEQ"
+  }
+};
+
 // ==========================================================================
 // GLOBAL APPLICATION STATE
 // ==========================================================================
@@ -469,7 +566,8 @@ const state = {
   unlockedToys: [],
   activeTPIndex: 0,
   tpFinancialMode: 'revenue',
-  tpRoadmapIndex: 0
+  tpRoadmapIndex: 0,
+  activeProfileId: null
 };
 
 // ==========================================================================
@@ -1820,6 +1918,113 @@ function initializeComponents() {
   initAudioGuidesModule();
 
   initStrategyWorkspace();
+  initFooterProfiles();
+}
+
+function initFooterProfiles() {
+  const profileBtns = document.querySelectorAll('.btn-footer-profile');
+  profileBtns.forEach(btn => {
+    btn.outerHTML = btn.outerHTML; // Clean listeners
+  });
+
+  document.querySelectorAll('.btn-footer-profile').forEach(btn => {
+    btn.addEventListener('click', () => {
+      sfx.click();
+      const profileId = btn.getAttribute('data-profile-id');
+      openProfileModal(profileId);
+    });
+  });
+
+  const closeBtn = document.getElementById('profile-modal-close');
+  const bgOverlay = document.getElementById('profile-overlay-bg');
+  
+  if (closeBtn) {
+    closeBtn.outerHTML = closeBtn.outerHTML;
+  }
+  if (bgOverlay) {
+    bgOverlay.outerHTML = bgOverlay.outerHTML;
+  }
+
+  const cleanCloseBtn = document.getElementById('profile-modal-close');
+  const cleanBgOverlay = document.getElementById('profile-overlay-bg');
+
+  if (cleanCloseBtn && cleanBgOverlay) {
+    const closeModal = () => {
+      sfx.click();
+      state.activeProfileId = null;
+      const iframe = document.getElementById('profile-modal-video');
+      if (iframe) iframe.src = ""; // Menghentikan suara video saat ditutup
+      document.getElementById('profile-modal').classList.remove('open');
+      document.getElementById('profile-overlay-bg').classList.remove('active');
+      document.body.style.overflow = '';
+    };
+    cleanCloseBtn.addEventListener('click', closeModal);
+    cleanBgOverlay.addEventListener('click', closeModal);
+  }
+}
+
+function openProfileModal(profileId) {
+  const data = footerProfilesData[profileId];
+  if (!data) return;
+
+  state.activeProfileId = profileId;
+
+  const modal = document.getElementById('profile-modal');
+  const overlay = document.getElementById('profile-overlay-bg');
+  const photo = document.getElementById('profile-modal-photo');
+  
+  // Try local photo first, fallback to Unsplash
+  photo.src = data.photoUrl;
+  photo.onerror = () => {
+    photo.src = data.fallbackPhoto;
+  };
+
+  document.getElementById('profile-modal-name').textContent = data.name;
+  
+  // Set ID or Email dynamically
+  const idLabel = document.getElementById('profile-meta-id-label');
+  const idValue = document.getElementById('profile-modal-id');
+  if (data.isInstructor) {
+    idLabel.setAttribute('data-i18n', 'profile.email.label');
+    idValue.textContent = data.idOrEmail;
+  } else {
+    idLabel.setAttribute('data-i18n', 'profile.id.label');
+    idValue.textContent = data.idOrEmail;
+  }
+
+  // Set Major label & content dynamically
+  const majorLabel = document.getElementById('profile-meta-major-label');
+  if (data.isInstructor) {
+    majorLabel.setAttribute('data-i18n', 'profile.instructor_class.label');
+  } else {
+    majorLabel.setAttribute('data-i18n', 'profile.major.label');
+  }
+
+  document.getElementById('profile-modal-major').textContent = state.language === 'zh' ? data.majorZh : data.majorEn;
+
+  // Render YouTube embed
+  const videoIframe = document.getElementById('profile-modal-video');
+  videoIframe.src = data.embedUrl;
+
+  const extYtBtn = document.getElementById('profile-link-external-youtube');
+  extYtBtn.href = data.videoUrl;
+
+  // Instructor links
+  const instructorLinks = document.getElementById('profile-instructor-links');
+  if (data.isInstructor) {
+    instructorLinks.style.display = 'flex';
+    document.getElementById('profile-link-blog').href = data.blogUrl;
+    document.getElementById('profile-link-youtube').href = data.ytChannelUrl;
+  } else {
+    instructorLinks.style.display = 'none';
+  }
+
+  // Run translation once more specifically for the modal labels to ensure they are synchronized!
+  syncLanguageUI();
+
+  document.body.style.overflow = 'hidden';
+  modal.classList.add('open');
+  overlay.classList.add('active');
 }
 
 // ==========================================================================
@@ -3118,6 +3323,13 @@ function bindGlobalEvents() {
       
       initializeComponents();
       syncLanguageUI();
+
+      if (state.activeProfileId) {
+        const data = footerProfilesData[state.activeProfileId];
+        if (data) {
+          document.getElementById('profile-modal-major').textContent = state.language === 'zh' ? data.majorZh : data.majorEn;
+        }
+      }
     });
   }
 
