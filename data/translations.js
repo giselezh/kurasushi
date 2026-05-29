@@ -123,7 +123,16 @@ export const translations = {
     "profile.visit_blog": "訪問學術部落格",
     "profile.visit_youtube": "訪問 YouTube 頻道",
     "profile.watch_youtube": "在 YouTube 觀看",
-    "profile.video_title": "D-ID 虛擬影音簡報"
+    "profile.video_title": "D-ID 虛影音簡報",
+    "sushi.drawer.intro": "請選擇策略分析報告 (Select a Technical Paper):",
+    "sushi.tp0.title": "TP 0: 企業概覽與財務績效",
+    "sushi.tp0.desc": "解構藏壽司之財務趨勢、營收成長表現與年報關鍵數據。",
+    "sushi.tp1.title": "TP 1: 外部環境與產業分析",
+    "sushi.tp1.desc": "解析 PESTEL 總體大環境力量與波特五力之競爭紅海鬥爭。",
+    "sushi.tp2.title": "TP 2: 內部資源與能力評估",
+    "sushi.tp2.desc": "深度剖析鮮度君、水流回收輸送專利與價值鏈 VRIO 壁壘。",
+    "sushi.tp3.title": "TP 3: 成長策略與未來挑戰",
+    "sushi.tp3.desc": "探討安索夫成長矩陣路徑、缺工浪潮與全球食材通膨危機。"
   },
   
   en: {
@@ -249,7 +258,16 @@ export const translations = {
     "profile.visit_blog": "Visit NCNU Blog",
     "profile.visit_youtube": "Visit YouTube Channel",
     "profile.watch_youtube": "Watch on YouTube",
-    "profile.video_title": "D-ID Introduction Video"
+    "profile.video_title": "D-ID Introduction Video",
+    "sushi.drawer.intro": "Select a Technical Paper to open strategy workspace:",
+    "sushi.tp0.title": "TP 0: Overview & Finances",
+    "sushi.tp0.desc": "Deconstructs Kura's financial trends, annual revenue growth, and key metrics.",
+    "sushi.tp1.title": "TP 1: External Environment",
+    "sushi.tp1.desc": "PESTEL macro-forces and Porter's Five Forces competitive red ocean analysis.",
+    "sushi.tp2.title": "TP 2: Internal Resource Assessment",
+    "sushi.tp2.desc": "In-depth VRIO matrix assessment of Mr. Fresh domes, automated water chutes, and value chains.",
+    "sushi.tp3.title": "TP 3: Corporate Growth Strategy",
+    "sushi.tp3.desc": "Ansoff growth matrix paths, suburban flagship store model, labor shortages, and food inflation."
   }
 };
 

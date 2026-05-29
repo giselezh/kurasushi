@@ -102,7 +102,16 @@ const translations = {
     "profile.visit_blog": "訪問學術部落格",
     "profile.visit_youtube": "訪問 YouTube 頻道",
     "profile.watch_youtube": "在 YouTube 觀看",
-    "profile.video_title": "D-ID 虛擬影音簡報"
+    "profile.video_title": "D-ID 虛擬影音簡報",
+    "sushi.drawer.intro": "請選擇策略分析報告 (Select a Technical Paper):",
+    "sushi.tp0.title": "TP 0: 企業概覽與財務績效",
+    "sushi.tp0.desc": "解構藏壽司之財務趨勢、營收成長表現與年報關鍵數據。",
+    "sushi.tp1.title": "TP 1: 外部環境與產業分析",
+    "sushi.tp1.desc": "解析 PESTEL 總體大環境力量與波特五力之競爭紅海鬥爭。",
+    "sushi.tp2.title": "TP 2: 內部資源與能力評估",
+    "sushi.tp2.desc": "深度剖析鮮度君、水流回收輸送專利與價值鏈 VRIO 壁壘。",
+    "sushi.tp3.title": "TP 3: 成長策略與未來挑戰",
+    "sushi.tp3.desc": "探討安索夫成長矩陣路徑、缺工浪潮與全球食材通膨危機。"
   },
   en: {
     "nav.title": "Kura Sushi Asia Co., Ltd.(2754)",
@@ -198,7 +207,16 @@ const translations = {
     "profile.visit_blog": "Visit NCNU Blog",
     "profile.visit_youtube": "Visit YouTube Channel",
     "profile.watch_youtube": "Watch on YouTube",
-    "profile.video_title": "D-ID Introduction Video"
+    "profile.video_title": "D-ID Introduction Video",
+    "sushi.drawer.intro": "Select a Technical Paper to open strategy workspace:",
+    "sushi.tp0.title": "TP 0: Overview & Finances",
+    "sushi.tp0.desc": "Deconstructs Kura's financial trends, annual revenue growth, and key metrics.",
+    "sushi.tp1.title": "TP 1: External Environment",
+    "sushi.tp1.desc": "PESTEL macro-forces and Porter's Five Forces competitive red ocean analysis.",
+    "sushi.tp2.title": "TP 2: Internal Resource Assessment",
+    "sushi.tp2.desc": "In-depth VRIO matrix assessment of Mr. Fresh domes, automated water chutes, and value chains.",
+    "sushi.tp3.title": "TP 3: Corporate Growth Strategy",
+    "sushi.tp3.desc": "Ansoff growth matrix paths, suburban flagship store model, labor shortages, and food inflation."
   }
 };
 
@@ -2031,6 +2049,22 @@ function openProfileModal(profileId) {
 // 12. HIGH-FIDELITY BILINGUAL STRATEGY WORKSPACE & SIMULATOR ENGINE
 // ==========================================================================
 
+window.toggleSushiDrawer = function() {
+  const isOpen = document.body.classList.toggle('sushi-drawer-open');
+  const drawer = document.getElementById('sushi-sidebar-drawer');
+  const overlay = document.getElementById('sushi-drawer-overlay');
+  
+  if (drawer && overlay) {
+    if (isOpen) {
+      drawer.classList.add('open');
+      overlay.classList.add('active');
+    } else {
+      drawer.classList.remove('open');
+      overlay.classList.remove('active');
+    }
+  }
+};
+
 function initStrategyWorkspace() {
   // 1. Inject Floating Sushi Menu container if not present
   let menu = document.getElementById('floating-sushi-menu');
@@ -2049,24 +2083,6 @@ function initStrategyWorkspace() {
         </svg>
       </button>
       <span class="sushi-menu-label" data-i18n="sushi.menu.label">menu</span>
-      <div class="plates-submenu" id="plates-submenu">
-        <button class="plate-menu-btn plate-tp0" data-tp="0">
-          <span>0</span>
-          <div class="plate-tooltip plate-tp0">TP 0: Overview & Finances</div>
-        </button>
-        <button class="plate-menu-btn plate-tp1" data-tp="1">
-          <span>1</span>
-          <div class="plate-tooltip plate-tp1">TP 1: External Analysis</div>
-        </button>
-        <button class="plate-menu-btn plate-tp2" data-tp="2">
-          <span>2</span>
-          <div class="plate-tooltip plate-tp2">TP 2: Internal Analysis</div>
-        </button>
-        <button class="plate-menu-btn plate-tp3" data-tp="3">
-          <span>3</span>
-          <div class="plate-tooltip plate-tp3">TP 3: Growth & Challenges</div>
-        </button>
-      </div>
     `;
     
     const logoSection = document.querySelector('.logo-section');
@@ -2080,15 +2096,83 @@ function initStrategyWorkspace() {
     const trigger = document.getElementById('sushi-trigger-btn');
     trigger.addEventListener('click', () => {
       sfx.click();
-      menu.classList.toggle('open');
+      window.toggleSushiDrawer();
+    });
+  }
+
+  // 2. Inject Left Sidebar Drawer if not present
+  let drawer = document.getElementById('sushi-sidebar-drawer');
+  if (!drawer) {
+    drawer = document.createElement('div');
+    drawer.id = 'sushi-sidebar-drawer';
+    drawer.className = 'sushi-sidebar-drawer';
+    drawer.innerHTML = `
+      <div class="sushi-drawer-header">
+        <div class="sushi-drawer-logo">
+          <span class="brand-badge">藏 KURA</span>
+          <h3 data-i18n="nav.title">Strategy Portal</h3>
+        </div>
+        <button id="sushi-drawer-close" class="btn-close-drawer"><i data-lucide="x"></i></button>
+      </div>
+      <div class="sushi-drawer-content">
+        <p class="sushi-drawer-intro" data-i18n="sushi.drawer.intro">Select a Technical Paper to open strategy workspace:</p>
+        <div class="sushi-drawer-list">
+          <div class="sushi-drawer-item tp-card-0" data-tp="0">
+            <div class="tp-badge badge-tp0">TP 0</div>
+            <div class="tp-details">
+              <h4 class="tp-title" data-i18n="sushi.tp0.title">TP 0: Overview & Finances</h4>
+              <p class="tp-desc" data-i18n="sushi.tp0.desc">Deconstructs Kura's financial trends, annual revenue growth, and key metrics.</p>
+            </div>
+          </div>
+          <div class="sushi-drawer-item tp-card-1" data-tp="1">
+            <div class="tp-badge badge-tp1">TP 1</div>
+            <div class="tp-details">
+              <h4 class="tp-title" data-i18n="sushi.tp1.title">TP 1: External Analysis</h4>
+              <p class="tp-desc" data-i18n="sushi.tp1.desc">PESTEL macro-forces and Porter's Five Forces competitive red ocean analysis.</p>
+            </div>
+          </div>
+          <div class="sushi-drawer-item tp-card-2" data-tp="2">
+            <div class="tp-badge badge-tp2">TP 2</div>
+            <div class="tp-details">
+              <h4 class="tp-title" data-i18n="sushi.tp2.title">TP 2: Internal Resource Assessment</h4>
+              <p class="tp-desc" data-i18n="sushi.tp2.desc">In-depth VRIO matrix assessment of Mr. Fresh domes, automated water chutes, and value chains.</p>
+            </div>
+          </div>
+          <div class="sushi-drawer-item tp-card-3" data-tp="3">
+            <div class="tp-badge badge-tp3">TP 3</div>
+            <div class="tp-details">
+              <h4 class="tp-title" data-i18n="sushi.tp3.title">TP 3: Corporate Growth Strategy</h4>
+              <p class="tp-desc" data-i18n="sushi.tp3.desc">Ansoff growth matrix paths, suburban flagship store model, labor shortages, and food inflation.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(drawer);
+
+    // Inject Overlay
+    const overlay = document.createElement('div');
+    overlay.id = 'sushi-drawer-overlay';
+    overlay.className = 'sushi-drawer-overlay';
+    document.body.appendChild(overlay);
+
+    // Bind Close Button & Overlay Click
+    document.getElementById('sushi-drawer-close').addEventListener('click', () => {
+      sfx.click();
+      window.toggleSushiDrawer();
+    });
+    overlay.addEventListener('click', () => {
+      sfx.click();
+      window.toggleSushiDrawer();
     });
 
-    // Bind plate buttons
-    menu.querySelectorAll('.plate-menu-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const tpIdx = parseInt(btn.getAttribute('data-tp'));
-        menu.classList.remove('open');
-        openTPPage(tpIdx);
+    // Bind Drawer items
+    drawer.querySelectorAll('.sushi-drawer-item').forEach(item => {
+      item.addEventListener('click', () => {
+        const tpIdx = parseInt(item.getAttribute('data-tp'));
+        sfx.click();
+        window.toggleSushiDrawer(); // Close drawer
+        openTPPage(tpIdx); // Open Strategy Workspace!
       });
     });
   }
@@ -3402,6 +3486,33 @@ function syncLanguageUI() {
 
 function syncThemeUI() {
   document.documentElement.setAttribute('data-theme', state.theme);
+  
+  const logoImg = document.getElementById('header-brand-logo');
+  if (logoImg) {
+    if (state.theme === 'dark') {
+      logoImg.src = 'images/logo/black_logo.jpg';
+      logoImg.onerror = () => {
+        logoImg.src = 'images/logo/black_logo.png';
+        logoImg.onerror = () => {
+          logoImg.src = 'black_logo.jpg';
+          logoImg.onerror = () => {
+            logoImg.src = 'black_logo.png';
+          };
+        };
+      };
+    } else {
+      logoImg.src = 'images/logo/white_logo.jpg';
+      logoImg.onerror = () => {
+        logoImg.src = 'images/logo/white_logo.png';
+        logoImg.onerror = () => {
+          logoImg.src = 'white_logo.jpg';
+          logoImg.onerror = () => {
+            logoImg.src = 'white_logo.png';
+          };
+        };
+      };
+    }
+  }
 }
 
 // ----------------------------------------------------
